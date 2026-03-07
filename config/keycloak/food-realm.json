@@ -1,0 +1,107 @@
+{
+    "realm": "food-ordering",
+    "enabled": true,
+    "roles": {
+        "realm": [
+            {
+                "name": "ROLE_CUSTOMER"
+            },
+            {
+                "name": "ROLE_RESTAURANT"
+            },
+            {
+                "name": "ROLE_COURIER"
+            },
+            {
+                "name": "ROLE_ADMIN"
+            }
+        ]
+    },
+    "clients": [
+        {
+            "clientId": "food-ordering-web",
+            "enabled": true,
+            "publicClient": true,
+            "directAccessGrantsEnabled": true,
+            "standardFlowEnabled": true,
+            "redirectUris": [
+                "http://localhost:4200/*",
+                "http://localhost:8000/*"
+            ],
+            "webOrigins": [
+                "http://localhost:4200",
+                "http://localhost:8000"
+            ]
+        }
+    ],
+    "users": [
+        {
+            "username": "admin1",
+            "enabled": true,
+            "email": "admin@food.com",
+            "firstName": "Super",
+            "lastName": "Admin",
+            "credentials": [
+                {
+                    "type": "password",
+                    "value": "123456",
+                    "temporary": false
+                }
+            ],
+            "realmRoles": [
+                "ROLE_ADMIN"
+            ]
+        },
+        {
+            "username": "cliente1",
+            "enabled": true,
+            "email": "cliente1@food.com",
+            "firstName": "Juan",
+            "lastName": "Perez",
+            "credentials": [
+                {
+                    "type": "password",
+                    "value": "123456",
+                    "temporary": false
+                }
+            ],
+            "realmRoles": [
+                "ROLE_CUSTOMER"
+            ]
+        },
+        {
+            "username": "restaurante1",
+            "enabled": true,
+            "email": "contacto@pizzaplanet.com",
+            "firstName": "Pizza",
+            "lastName": "Planet",
+            "credentials": [
+                {
+                    "type": "password",
+                    "value": "123456",
+                    "temporary": false
+                }
+            ],
+            "realmRoles": [
+                "ROLE_RESTAURANT"
+            ]
+        },
+        {
+            "username": "repartidor1",
+            "enabled": true,
+            "email": "repartidor1@food.com",
+            "firstName": "Carlos",
+            "lastName": "Moto",
+            "credentials": [
+                {
+                    "type": "password",
+                    "value": "123456",
+                    "temporary": false
+                }
+            ],
+            "realmRoles": [
+                "ROLE_COURIER"
+            ]
+        }
+    ]
+}

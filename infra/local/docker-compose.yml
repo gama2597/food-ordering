@@ -1,0 +1,213 @@
+version: '3.8'
+
+# ==========================================
+# PLANTILLA BASE PARA BASES DE DATOS (CON HEALTHCHECK)
+# ==========================================
+x-db-common: &db-common
+  image: postgres:16-alpine
+  environment:
+    POSTGRES_USER: ${DB_USER}
+    POSTGRES_PASSWORD: ${DB_PASSWORD}
+  networks:
+    - food-network
+  restart: unless-stopped
+  # ¡NUEVO! Asegura que la BD esté lista antes de que otros servicios se conecten
+  healthcheck:
+    test: ["CMD-SHELL", "pg_isready -U ${DB_USER}"]
+    interval: 10s
+    timeout: 5s
+    retries: 5
+
+services:
+  # ==========================================
+  # 1. BASES DE DATOS INDEPENDIENTES
+  # ==========================================
+  keycloak-db:
+    <<: *db-common
+    container_name: food-keycloak-db
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: keycloak_db
+    ports: [ "${KEYCLOAK_DB_PORT}:5432" ]
+    volumes: [ "keycloak-db-data:/var/lib/postgresql/data" ]
+
+  user-db:
+    <<: *db-common
+    container_name: food-user-db
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${USER_DB_NAME}
+    ports: [ "${USER_DB_PORT}:5432" ]
+    volumes: [ "user-db-data:/var/lib/postgresql/data" ]
+
+  catalog-db:
+    <<: *db-common
+    container_name: food-catalog-db
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${CATALOG_DB_NAME}
+    ports: [ "${CATALOG_DB_PORT}:5432" ]
+    volumes: [ "catalog-db-data:/var/lib/postgresql/data" ]
+
+  order-db:
+    <<: *db-common
+    container_name: food-order-db
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${ORDER_DB_NAME}
+    ports: [ "${ORDER_DB_PORT}:5432" ]
+    volumes: [ "order-db-data:/var/lib/postgresql/data" ]
+
+  payment-db:
+    <<: *db-common
+    container_name: food-payment-db
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${PAYMENT_DB_NAME}
+    ports: [ "${PAYMENT_DB_PORT}:5432" ]
+    volumes: [ "payment-db-data:/var/lib/postgresql/data" ]
+
+  delivery-db:
+    <<: *db-common
+    container_name: food-delivery-db
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DELIVERY_DB_NAME}
+    ports: [ "${DELIVERY_DB_PORT}:5432" ]
+    volumes: [ "delivery-db-data:/var/lib/postgresql/data" ]
+
+  # ==========================================
+  # 2. HERRAMIENTA UI: PGADMIN
+  # ==========================================
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: food-pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@food.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports: [ "${PGADMIN_PORT}:80" ]
+    networks:
+      - food-network
+    depends_on:
+      user-db:
+        condition: service_healthy
+      catalog-db:
+        condition: service_healthy
+    volumes: [ "pgadmin-data:/var/lib/pgadmin" ]
+
+  # ==========================================
+  # 3. SEGURIDAD: KEYCLOAK
+  # ==========================================
+  keycloak:
+    image: quay.io/keycloak/keycloak:25.0
+    container_name: food-keycloak
+    command: start-dev --import-realm
+    environment:
+      KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN_USER}
+      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://keycloak-db:5432/keycloak_db
+      KC_DB_USERNAME: ${DB_USER}
+      KC_DB_PASSWORD: ${DB_PASSWORD}
+    ports: [ "${KEYCLOAK_PORT}:8080" ]
+    volumes:
+      - ../../config/keycloak:/opt/keycloak/data/import:ro # :ro para solo lectura
+    depends_on:
+      keycloak-db:
+        condition: service_healthy # Espera a que la BD esté viva
+    networks:
+      - food-network
+
+  # ==========================================
+  # 4. MENSAJERÍA ASÍNCRONA: KAFKA (KRaft)
+  # ==========================================
+  kafka:
+    image: apache/kafka:3.7.0
+    container_name: food-kafka
+    environment:
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: broker,controller
+      # ¡NUEVO! Configuración de red para acceso interno (Docker) y externo (Localhost)
+      KAFKA_LISTENERS: INTERNAL://0.0.0.0:29092,EXTERNAL://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093
+      KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka:29092,EXTERNAL://localhost:${KAFKA_PORT}
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT,CONTROLLER:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@localhost:9093
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+    ports: [ "${KAFKA_PORT}:9092" ]
+    networks:
+      - food-network
+    volumes: [ "kafka-data:/var/lib/kafka/data" ]
+
+  # ==========================================
+  # 5. HERRAMIENTA UI: KAFKA-UI
+  # ==========================================
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    container_name: food-kafka-ui
+    environment:
+      KAFKA_CLUSTERS_0_NAME: local
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:29092 # Usa el listener interno
+    ports: [ "${KAFKA_UI_PORT}:8080" ]
+    networks:
+      - food-network
+    depends_on:
+      - kafka
+
+  # ==========================================
+  # 6. OBSERVABILIDAD: PROMETHEUS, GRAFANA & ZIPKIN
+  # ==========================================
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: food-prometheus
+    ports: [ "9090:9090" ]
+    volumes:
+      - ../../config/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    networks:
+      - food-network
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: food-grafana
+    ports: [ "3000:3000" ]
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    depends_on:
+      - prometheus
+    networks:
+      - food-network
+    volumes: [ "grafana-data:/var/lib/grafana" ]
+
+  zipkin:
+    image: openzipkin/zipkin:latest
+    container_name: food-zipkin
+    ports: [ "${ZIPKIN_PORT}:9411" ]
+    networks:
+      - food-network
+
+# ==========================================
+# DECLARACIÓN DE REDES Y VOLÚMENES
+# ==========================================
+networks:
+  food-network:
+    driver: bridge
+
+volumes:
+  keycloak-db-data:
+  user-db-data:
+  catalog-db-data:
+  order-db-data:
+  payment-db-data:
+  delivery-db-data:
+  pgadmin-data:
+  kafka-data:
+  grafana-data:

@@ -1,0 +1,45 @@
+server:
+  port: 8000
+
+spring:
+  application:
+    name: api-gateway
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          # URL del Keycloak que levantamos en Docker
+          issuer-uri: http://localhost:8080/realms/food-ordering
+
+  cloud:
+    gateway:
+      server:
+        webflux:
+          globalcors:
+            cors-configurations:
+              "[/**]":
+                allowedOrigins: "http://localhost:4200"
+                allowedMethods: "*"
+                allowedHeaders: "*"
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    disable-swagger-default-url: true
+    urls:
+      - name: catalog-service
+        url: /v3/api-docs/catalog-service
+
+management:
+  endpoint:
+    gateway:
+      access: read-only
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus,gateway
+  # Opcional pero recomendado para métricas más ricas:
+  metrics:
+    tags:
+      application: ${spring.application.name}

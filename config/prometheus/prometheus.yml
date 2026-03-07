@@ -1,0 +1,29 @@
+global:
+  scrape_interval: 15s # Prometheus preguntará por métricas cada 15 segundos
+  evaluation_interval: 15s
+
+scrape_configs:
+  # 1. Prometheus se monitorea a sí mismo
+  - job_name: "prometheus"
+    static_configs:
+      - targets: ["localhost:9090"]
+
+  # 2. Monitoreo del API Gateway
+  - job_name: "api-gateway"
+    metrics_path: "/actuator/prometheus"
+    static_configs:
+      # host.docker.internal permite al contenedor llegar a tu PC (localhost)
+      # donde estarás corriendo tu microservicio desde el IDE (ej. puerto 8080)
+      - targets: ["host.docker.internal:8080"]
+
+  # 3. Monitoreo del Catalog Service
+  - job_name: "catalog-service"
+    metrics_path: "/actuator/prometheus"
+    static_configs:
+      # Asumiendo que correrás el Catalog Service en el puerto 8081 en tu IDE
+      - targets: ["host.docker.internal:8081"]
+
+  # Puedes agregar el resto de servicios aquí con sus respectivos puertos
+  # - job_name: 'order-service'
+  #   static_configs:
+  #     - targets: ['host.docker.internal:8082']

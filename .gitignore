@@ -1,0 +1,10 @@
+# .gitignore global
+node_modules/
+dist/
+target/
+*.jar
+*.log
+.env
+.idea/
+.vscode/
+*.iml
