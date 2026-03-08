@@ -1,6 +1,7 @@
 package com.tecsup.app.micro.catalog.application.service.impl;
 
 import com.tecsup.app.micro.catalog.application.service.RestaurantApplicationService;
+import com.tecsup.app.micro.catalog.application.usecase.DeactivateRestaurantUseCase;
 import com.tecsup.app.micro.catalog.application.usecase.CreateRestaurantUseCase;
 import com.tecsup.app.micro.catalog.application.usecase.GetAllActiveRestaurantsUseCase;
 import com.tecsup.app.micro.catalog.application.usecase.GetRestaurantByIdUseCase;
@@ -22,6 +23,7 @@ public class RestaurantApplicationServiceImpl implements RestaurantApplicationSe
     private final CreateRestaurantUseCase createRestaurantUseCase;
     private final GetRestaurantByIdUseCase getRestaurantByIdUseCase;
     private final GetAllActiveRestaurantsUseCase getAllActiveRestaurantsUseCase;
+    private final DeactivateRestaurantUseCase deactivateRestaurantUseCase;
 
     @Override
     @Transactional
@@ -39,5 +41,11 @@ public class RestaurantApplicationServiceImpl implements RestaurantApplicationSe
     @Transactional(readOnly = true)
     public List<Restaurant> getAllActiveRestaurants() {
         return getAllActiveRestaurantsUseCase.execute();
+    }
+
+    @Override
+    @Transactional
+    public void deactivateRestaurant(Long id) {
+        deactivateRestaurantUseCase.execute(id);
     }
 }

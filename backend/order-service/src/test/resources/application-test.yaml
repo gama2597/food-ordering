@@ -15,7 +15,17 @@ spring:
           jwk-set-uri: http://localhost:9999/mock-jwks
   kafka:
     bootstrap-servers: localhost:9092
+    listener:
+      auto-startup: false
 
 clients:
   catalog-service:
     url: http://localhost:8082
+
+app:
+  kafka:
+    topics:
+      order-created: order.created
+      payment-requested: payment.requested
+      payment-approved: payment.approved
+      payment-rejected: payment.rejected

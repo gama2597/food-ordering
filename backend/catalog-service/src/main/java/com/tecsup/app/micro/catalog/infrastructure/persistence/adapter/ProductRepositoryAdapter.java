@@ -33,7 +33,7 @@ public class ProductRepositoryAdapter implements ProductRepositoryPort {
 
     @Override
     public List<Product> findByRestaurantId(Long restaurantId) {
-        List<ProductEntity> entities = jpaRepository.findByRestaurantId(restaurantId);
+        List<ProductEntity> entities = jpaRepository.findByRestaurantIdAndAvailableTrue(restaurantId);
         return mapper.toDomainList(entities);
     }
 }

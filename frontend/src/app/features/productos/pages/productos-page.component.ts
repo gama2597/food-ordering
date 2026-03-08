@@ -9,6 +9,7 @@ import { CatalogService } from '../services/catalog.service';
 import { Product, Restaurant } from '../../../shared/models/catalog.models';
 import { OrderService } from '../services/order.service';
 import { CreateOrderItemRequest } from '../../../shared/models/order.models';
+import { AuthService } from '../../../core/auth/auth.service';
 
 @Component({
   selector: 'app-productos-page',
@@ -21,12 +22,15 @@ export class ProductosPageComponent implements OnInit {
   private readonly catalogService = inject(CatalogService);
   private readonly orderService = inject(OrderService);
   private readonly messageService = inject(MessageService);
+  private readonly authService = inject(AuthService);
 
   restaurants: Restaurant[] = [];
   selectedRestaurant?: Restaurant;
   products: Product[] = [];
   quantities: Record<number, number> = {};
   creatingOrder = false;
+  deletingRestaurantId?: number;
+  deletingProductId?: number;
   lastCreatedOrderId?: number;
 
   ngOnInit(): void {
@@ -44,6 +48,94 @@ export class ProductosPageComponent implements OnInit {
     this.quantities = {};
     this.catalogService.getProductsByRestaurant(restaurant.id).subscribe((products) => {
       this.products = products;
+    });
+  }
+
+  canDeleteRestaurants(): boolean {
+    return this.authService.hasAnyRole(['ADMIN']);
+  }
+
+  canDeleteProducts(): boolean {
+    return this.authService.hasAnyRole(['ADMIN', 'RESTAURANT']);
+  }
+
+  deleteRestaurant(restaurant: Restaurant): void {
+    if (!this.canDeleteRestaurants()) {
+      return;
+    }
+
+    const confirmed = window.confirm(`Se desactivara el restaurante "${restaurant.name}". Esta accion no se puede deshacer.`);
+    if (!confirmed) {
+      return;
+    }
+
+    this.deletingRestaurantId = restaurant.id;
+    this.catalogService.deleteRestaurant(restaurant.id).subscribe({
+      next: () => {
+        this.deletingRestaurantId = undefined;
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Restaurante desactivado',
+          detail: `El restaurante ${restaurant.name} fue desactivado.`
+        });
+
+        this.catalogService.getRestaurants().subscribe((restaurants) => {
+          this.restaurants = restaurants;
+          const currentSelectionStillExists = this.selectedRestaurant && restaurants.some((item) => item.id === this.selectedRestaurant?.id);
+          if (currentSelectionStillExists) {
+            return;
+          }
+
+          this.selectedRestaurant = undefined;
+          this.products = [];
+          this.quantities = {};
+
+          if (restaurants.length > 0) {
+            this.onRestaurantChange(restaurants[0]);
+          }
+        });
+      },
+      error: (error) => {
+        this.deletingRestaurantId = undefined;
+        this.messageService.add({
+          severity: 'error',
+          summary: 'No se pudo desactivar restaurante',
+          detail: error?.error?.message ?? 'Intenta nuevamente en unos segundos.'
+        });
+      }
+    });
+  }
+
+  deleteProduct(product: Product): void {
+    if (!this.canDeleteProducts()) {
+      return;
+    }
+
+    const confirmed = window.confirm(`Se desactivara el producto "${product.name}". Esta accion no se puede deshacer.`);
+    if (!confirmed) {
+      return;
+    }
+
+    this.deletingProductId = product.id;
+    this.catalogService.deleteProduct(product.id).subscribe({
+      next: () => {
+        this.deletingProductId = undefined;
+        this.products = this.products.filter((item) => item.id !== product.id);
+        delete this.quantities[product.id];
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Producto desactivado',
+          detail: `El producto ${product.name} fue desactivado.`
+        });
+      },
+      error: (error) => {
+        this.deletingProductId = undefined;
+        this.messageService.add({
+          severity: 'error',
+          summary: 'No se pudo desactivar producto',
+          detail: error?.error?.message ?? 'Intenta nuevamente en unos segundos.'
+        });
+      }
     });
   }
 
@@ -75,7 +167,7 @@ export class ProductosPageComponent implements OnInit {
           this.messageService.add({
             severity: 'success',
             summary: 'Pedido creado',
-            detail: `Pedido #${order.id} registrado correctamente.`
+            detail: `Pedido #${order.id} registrado. Solicita el pago desde Dashboard cuando desees.`
           });
         },
         error: (error) => {

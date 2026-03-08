@@ -9,4 +9,6 @@ public interface RestaurantApplicationService {
     Restaurant getRestaurantById(Long id);
 
     List<Restaurant> getAllActiveRestaurants();
+
+    void deactivateRestaurant(Long id);
 }

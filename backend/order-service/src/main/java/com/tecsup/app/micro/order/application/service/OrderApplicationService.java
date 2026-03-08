@@ -11,4 +11,10 @@ public interface OrderApplicationService {
     Order getMyOrderById(String customerAuthUserId, Long orderId);
 
     List<Order> listMyOrders(String customerAuthUserId);
+
+    Order requestMyOrderPayment(String customerAuthUserId, Long orderId);
+
+    void applyPaymentApproved(Long orderId);
+
+    void applyPaymentRejected(Long orderId);
 }

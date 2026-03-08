@@ -19,14 +19,16 @@
   <p-card styleClass="orders-card">
     <h3>Mis pedidos recientes</h3>
 
-    <p-table [value]="orders">
+    <p-table [value]="orders" [paginator]="true" [rows]="5" [rowsPerPageOptions]="[5, 10, 15]" [responsiveLayout]="'scroll'">
       <ng-template pTemplate="header">
         <tr>
           <th>ID</th>
           <th>Restaurante</th>
           <th>Total</th>
           <th>Estado</th>
+          <th>Pago</th>
           <th>Fecha</th>
+          <th>Acciones</th>
         </tr>
       </ng-template>
       <ng-template pTemplate="body" let-order>
@@ -35,14 +37,69 @@
           <td>{{ order.restaurantId }}</td>
           <td>S/ {{ order.totalAmount }}</td>
           <td><p-tag [value]="order.status" [severity]="statusSeverity(order.status)"></p-tag></td>
+          <td>
+            @if (paymentByOrderId[order.id]) {
+              <p-tag [value]="paymentByOrderId[order.id]?.status" [severity]="paymentStatusSeverity(paymentByOrderId[order.id]?.status || 'UNKNOWN')"></p-tag>
+            } @else if (order.status === 'PAYMENT_PENDING') {
+              <p-tag value="Procesando" severity="warn"></p-tag>
+            } @else {
+              <span>-</span>
+            }
+          </td>
           <td>{{ order.createdAt | date: 'dd/MM/yyyy HH:mm' }}</td>
+          <td>
+            <button
+              pButton
+              type="button"
+              size="small"
+              label="Pagar"
+              icon="pi pi-credit-card"
+              [disabled]="!canRequestPayment(order)"
+              [loading]="payingOrderId === order.id"
+              (click)="requestPayment(order)">
+            </button>
+            <button
+              pButton
+              type="button"
+              size="small"
+              class="ml-2"
+              label="Ver pago"
+              icon="pi pi-search"
+              severity="secondary"
+              [outlined]="true"
+              [disabled]="!canLoadPayment(order)"
+              [loading]="loadingPaymentOrderId === order.id"
+              (click)="loadPayment(order)">
+            </button>
+          </td>
         </tr>
       </ng-template>
       <ng-template pTemplate="emptymessage">
         <tr>
-          <td colspan="5">Aun no tienes pedidos registrados.</td>
+          <td colspan="7">Aun no tienes pedidos registrados.</td>
         </tr>
       </ng-template>
     </p-table>
+
+    <p-dialog
+      header="Detalle de pago"
+      [(visible)]="paymentDialogVisible"
+      [modal]="true"
+      [closable]="true"
+      [draggable]="false"
+      [resizable]="false"
+      [style]="{ width: 'min(92vw, 34rem)' }"
+      (onHide)="closePaymentDialog()"
+    >
+      @if (selectedPayment) {
+        <div class="payment-detail">
+          <h4>Pedido #{{ selectedPayment.orderId }}</h4>
+          <p><strong>Estado:</strong> {{ selectedPayment.status }}</p>
+          <p><strong>Monto:</strong> {{ selectedPayment.currency }} {{ selectedPayment.amount }}</p>
+          <p><strong>Motivo:</strong> {{ selectedPayment.reason }}</p>
+          <p><strong>Actualizado:</strong> {{ selectedPayment.updatedAt | date: 'dd/MM/yyyy HH:mm' }}</p>
+        </div>
+      }
+    </p-dialog>
   </p-card>
 </section>

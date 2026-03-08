@@ -16,4 +16,12 @@ export class CatalogService {
   getProductsByRestaurant(restaurantId: number): Observable<Product[]> {
     return this.http.get<Product[]>(`${this.baseUrl}/api/v1/catalog/products/restaurant/${restaurantId}`);
   }
+
+  deleteRestaurant(restaurantId: number): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/api/v1/catalog/restaurants/${restaurantId}`);
+  }
+
+  deleteProduct(productId: number): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/api/v1/catalog/products/${productId}`);
+  }
 }

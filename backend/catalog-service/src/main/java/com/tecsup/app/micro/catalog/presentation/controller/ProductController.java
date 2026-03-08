@@ -41,4 +41,12 @@ public class ProductController {
         List<Product> domains = productService.getProductsByRestaurant(restaurantId);
         return ResponseEntity.ok(mapper.toResponseList(domains));
     }
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('ROLE_RESTAURANT') or hasAuthority('ROLE_ADMIN')")
+    @Operation(summary = "Desactivar producto por ID")
+    public ResponseEntity<Void> deactivateProduct(@PathVariable Long id) {
+        productService.deactivateProduct(id);
+        return ResponseEntity.noContent().build();
+    }
 }

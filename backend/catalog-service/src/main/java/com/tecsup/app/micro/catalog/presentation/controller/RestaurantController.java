@@ -50,4 +50,12 @@ public class RestaurantController {
         Restaurant domain = restaurantService.getRestaurantById(id);
         return ResponseEntity.ok(mapper.toResponse(domain));
     }
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @Operation(summary = "Desactivar restaurante por ID")
+    public ResponseEntity<Void> deactivateRestaurant(@PathVariable Long id) {
+        restaurantService.deactivateRestaurant(id);
+        return ResponseEntity.noContent().build();
+    }
 }

@@ -4,7 +4,7 @@ Este documento define el contrato minimo para integrar `order-service` y `paymen
 
 ## Topicos Kafka
 
-- Entrada de `payment-service`: `order.created`
+- Entrada de `payment-service`: `payment.requested`
 - Salida de `payment-service` (aprobado): `payment.approved`
 - Salida de `payment-service` (rechazado): `payment.rejected`
 
@@ -15,18 +15,15 @@ Este documento define el contrato minimo para integrar `order-service` y `paymen
 - Timestamps: ISO-8601 UTC (`Instant`).
 - Versionado inicial de contrato: `eventVersion = 1`.
 
-## Evento de entrada: `order.created`
+## Evento de entrada: `payment.requested`
 
 Payload minimo esperado por `payment-service`:
 
 ```json
 {
-  "eventId": "58f3739e-7ec4-47f4-b3e4-d2ca17f53cb8",
-  "eventVersion": 1,
-  "eventType": "ORDER_CREATED",
-  "occurredAt": "2026-03-08T12:10:35Z",
   "orderId": 101,
   "customerAuthUserId": "f2f65f52-8f58-4fa4-a09d-00e4e6f18f1d",
+  "requestedAt": "2026-03-08T12:10:35Z",
   "amount": 45.50,
   "currency": "PEN"
 }
@@ -34,11 +31,10 @@ Payload minimo esperado por `payment-service`:
 
 Campos requeridos:
 
-- `eventId`
 - `orderId`
 - `customerAuthUserId`
 - `amount`
-- `occurredAt`
+- `requestedAt`
 
 ## Evento de salida: `payment.approved`
 
@@ -80,7 +76,7 @@ Campos requeridos:
 
 - `payment-service` debe procesar una sola vez por `orderId`.
 - Se recomienda restriccion unica en base de datos: `unique(order_id)`.
-- Si llega duplicado de `order.created` para un `orderId` ya procesado:
+- Si llega duplicado de `payment.requested` para un `orderId` ya procesado:
   - no crear un nuevo pago,
   - no publicar un nuevo evento de salida.
 
@@ -91,8 +87,9 @@ Campos requeridos:
 
 ## Criterios de aceptacion Sprint 4
 
-- Creando un pedido en `order-service`, se publica `order.created`.
-- `payment-service` consume el evento y persiste el pago con estado final.
+- Creando un pedido en `order-service`, queda en `CREATED`.
+- Al solicitar pago (`POST /api/v1/orders/{id}/request-payment`), se publica `payment.requested`.
+- `payment-service` consume `payment.requested` y persiste el pago con estado final.
 - `payment-service` publica `payment.approved` o `payment.rejected`.
 - `order-service` consume resultado y actualiza estado del pedido.
 - Hay trazabilidad en Kafka UI y evidencia QA del flujo completo.

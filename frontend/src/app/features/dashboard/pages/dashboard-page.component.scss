@@ -37,6 +37,27 @@ p {
   margin-top: 1rem;
 }
 
+.ml-2 {
+  margin-left: 0.5rem;
+}
+
+.payment-detail {
+  margin-top: 1rem;
+  padding: 0.75rem 1rem;
+  border-radius: 12px;
+  background: #f6f9ff;
+  border: 1px solid #dbe7ff;
+}
+
+.payment-detail h4 {
+  margin: 0 0 0.5rem;
+  color: #1d3557;
+}
+
+.payment-detail p {
+  margin: 0.25rem 0;
+}
+
 :host ::ng-deep .metric-card {
   border-radius: 16px;
   color: #fff;

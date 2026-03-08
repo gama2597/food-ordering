@@ -3,6 +3,7 @@ package com.tecsup.app.micro.order.infrastructure.messaging.mapper;
 import com.tecsup.app.micro.order.domain.model.Order;
 import com.tecsup.app.micro.order.domain.model.OrderItem;
 import com.tecsup.app.micro.order.infrastructure.messaging.event.OrderCreatedEvent;
+import com.tecsup.app.micro.order.infrastructure.messaging.event.PaymentRequestedEvent;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -27,6 +28,16 @@ public class OrderEventMapper {
                 item.getUnitPrice(),
                 item.getQuantity(),
                 item.getSubtotal()
+        );
+    }
+
+    public PaymentRequestedEvent toPaymentRequestedEvent(Order order) {
+        return new PaymentRequestedEvent(
+                order.getId(),
+                order.getCustomerAuthUserId(),
+                order.getTotalAmount(),
+                "PEN",
+                order.getUpdatedAt()
         );
     }
 }

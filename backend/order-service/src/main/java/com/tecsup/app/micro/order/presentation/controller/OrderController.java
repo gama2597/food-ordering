@@ -54,4 +54,11 @@ public class OrderController {
         List<Order> orders = orderApplicationService.listMyOrders(jwt.getSubject());
         return ResponseEntity.ok(mapper.toResponseList(orders));
     }
+
+    @PostMapping("/{id}/request-payment")
+    @Operation(summary = "Solicita el pago de un pedido propio")
+    public ResponseEntity<OrderResponse> requestMyOrderPayment(@AuthenticationPrincipal Jwt jwt, @PathVariable Long id) {
+        Order updated = orderApplicationService.requestMyOrderPayment(jwt.getSubject(), id);
+        return ResponseEntity.ok(mapper.toResponse(updated));
+    }
 }

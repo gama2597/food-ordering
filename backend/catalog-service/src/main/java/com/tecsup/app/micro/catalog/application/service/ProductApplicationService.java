@@ -7,4 +7,6 @@ public interface ProductApplicationService {
     Product addProductToRestaurant(Product product);
 
     List<Product> getProductsByRestaurant(Long restaurantId);
+
+    void deactivateProduct(Long productId);
 }

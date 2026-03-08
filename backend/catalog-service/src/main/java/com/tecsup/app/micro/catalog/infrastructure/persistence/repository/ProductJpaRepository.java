@@ -6,6 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface ProductJpaRepository extends JpaRepository<ProductEntity, Long> {
-    // Custom query para buscar platos de un restaurante específico
-    List<ProductEntity> findByRestaurantId(Long restaurantId);
+    // Solo productos disponibles para catálogo activo
+    List<ProductEntity> findByRestaurantIdAndAvailableTrue(Long restaurantId);
 }

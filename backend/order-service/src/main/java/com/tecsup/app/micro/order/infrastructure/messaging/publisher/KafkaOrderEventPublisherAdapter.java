@@ -24,6 +24,9 @@ public class KafkaOrderEventPublisherAdapter implements OrderEventPublisherPort 
     @Value("${app.kafka.topics.order-created:order.created}")
     private String orderCreatedTopic;
 
+    @Value("${app.kafka.topics.payment-requested:payment.requested}")
+    private String paymentRequestedTopic;
+
     @Override
     public void publishOrderCreated(Order order) {
         try {
@@ -32,6 +35,17 @@ public class KafkaOrderEventPublisherAdapter implements OrderEventPublisherPort 
             log.info("Evento order.created publicado para orderId={}", order.getId());
         } catch (Exception ex) {
             log.error("No se pudo publicar evento order.created para orderId={}", order.getId(), ex);
+        }
+    }
+
+    @Override
+    public void publishPaymentRequested(Order order) {
+        try {
+            var event = mapper.toPaymentRequestedEvent(order);
+            kafkaTemplate.send(paymentRequestedTopic, String.valueOf(order.getId()), event);
+            log.info("Evento payment.requested publicado para orderId={}", order.getId());
+        } catch (Exception ex) {
+            log.error("No se pudo publicar evento payment.requested para orderId={}", order.getId(), ex);
         }
     }
 }

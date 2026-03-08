@@ -13,4 +13,9 @@ public class NoOpOrderEventPublisherAdapter implements OrderEventPublisherPort {
     public void publishOrderCreated(Order order) {
         log.warn("No hay publisher Kafka configurado. Evento order.created omitido para orderId={}", order.getId());
     }
+
+    @Override
+    public void publishPaymentRequested(Order order) {
+        log.warn("No hay publisher Kafka configurado. Evento payment.requested omitido para orderId={}", order.getId());
+    }
 }
