@@ -1,6 +1,6 @@
 # Food Ordering Microservices
 
-[![Backend CI](https://github.com/gama2597/food-ordering/actions/workflows/ci-backend.yml/badge.svg)](https://github.com/gama2597/food-ordering/actions/workflows/ci-backend.yml)
+[![CI](https://github.com/gama2597/food-ordering/actions/workflows/ci-backend.yml/badge.svg)](https://github.com/gama2597/food-ordering/actions/workflows/ci-backend.yml)
 
 Proyecto de arquitectura de software basado en microservicios para pedidos de comida.
 

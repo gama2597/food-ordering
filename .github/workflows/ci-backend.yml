@@ -1,4 +1,4 @@
-name: Backend CI
+name: CI
 
 on:
   push:
@@ -9,7 +9,7 @@ on:
       - master
 
 jobs:
-  test-services:
+  test-backend:
     name: Test ${{ matrix.service }}
     runs-on: ubuntu-latest
     strategy:
@@ -21,6 +21,15 @@ jobs:
             command: ./mvnw test
           - service: payment-service
             working-directory: backend/payment-service
+            command: ./mvnw test
+          - service: catalog-service
+            working-directory: backend/catalog-service
+            command: ./mvnw test
+          - service: user-service
+            working-directory: backend/user-service
+            command: ./mvnw test
+          - service: api-gateway
+            working-directory: backend/api-gateway
             command: ./mvnw test
           - service: delivery-service
             working-directory: backend/delivery-service
@@ -38,8 +47,31 @@ jobs:
           cache: maven
 
       - name: Ensure Maven wrappers are executable
-        run: chmod +x backend/order-service/mvnw backend/payment-service/mvnw
+        run: chmod +x backend/order-service/mvnw backend/payment-service/mvnw backend/catalog-service/mvnw backend/user-service/mvnw backend/api-gateway/mvnw
 
       - name: Run tests
         run: ${{ matrix.command }}
         working-directory: ${{ matrix.working-directory }}
+
+  build-frontend:
+    name: Build frontend
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+        working-directory: frontend
+
+      - name: Build
+        run: npm run build
+        working-directory: frontend
