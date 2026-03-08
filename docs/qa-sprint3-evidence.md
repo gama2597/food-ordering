@@ -41,17 +41,17 @@ No incluyen aun consumo de eventos por otros microservicios (payment/delivery) n
 
 | Caso | Rol | Request | Objetivo | Expected | Actual | Evidencia |
 |---|---|---|---|---|---|---|
-| 1. Docs order via gateway | Publico | `GET /v3/api-docs/order-service` | Verificar ruteo gateway -> docs de order | `200` JSON OpenAPI |  |  |
-| 2. Health order-service | Publico | `GET http://localhost:8083/actuator/health` | Confirmar servicio arriba | `200` + `UP` |  |  |
-| 3. Crear pedido (feliz) | Customer | `POST /api/v1/orders` | Crear pedido y calcular total/subtotales | `201` + `status=CREATED` |  |  |
-| 4. Obtener pedido propio por ID | Customer | `GET /api/v1/orders/{ORDER_ID}` | Validar consulta de pedido propio | `200` + mismo `id` |  |  |
-| 5. Listar mis pedidos | Customer | `GET /api/v1/orders/me` | Validar historial por usuario | `200` + lista con `ORDER_ID` |  |  |
-| 6. Crear pedido sin token | Sin token | `POST /api/v1/orders` | Validar autenticacion requerida | `401 Unauthorized` |  |  |
-| 7. Crear pedido con body vacio | Customer | `POST /api/v1/orders` body `{}` | Validar estructura minima de request | `400 Bad Request` |  |  |
-| 8. Crear pedido con quantity=0 | Customer | `POST /api/v1/orders` item invalido | Validar regla cantidad > 0 | `400 Bad Request` |  |  |
-| 9. Crear pedido con unitPrice=0 | Customer | `POST /api/v1/orders` item invalido | Validar regla precio > 0 | `400 Bad Request` |  |  |
-| 10. Ownership (pedido ajeno) | Customer B | `GET /api/v1/orders/{ORDER_ID_A}` | Validar que no se vea pedido de otro usuario | `400` con mensaje de permisos |  |  |
-| 11. Kafka order.created publicado | N/A | Ver topic en Kafka UI tras crear pedido | Validar integracion asincrona inicial | Mensaje presente en topic `order.created` |  |  |
+| 1. Docs order via gateway | Publico | `GET /v3/api-docs/order-service` | Verificar ruteo gateway -> docs de order | `200` JSON OpenAPI | OK (`200`) | Captura BE3-01 + response OpenAPI |
+| 2. Health order-service | Publico | `GET http://localhost:8083/actuator/health` | Confirmar servicio arriba | `200` + `UP` | OK (`200/UP`) | Captura BE3-02 + health response |
+| 3. Crear pedido (feliz) | Customer | `POST /api/v1/orders` | Crear pedido y calcular total/subtotales | `201` + `status=CREATED` | OK (`201`, total calculado) | Captura BE3-03 + request/response |
+| 4. Obtener pedido propio por ID | Customer | `GET /api/v1/orders/{ORDER_ID}` | Validar consulta de pedido propio | `200` + mismo `id` | OK (`200`, ID coincide) | Captura BE3-04 + response por ID |
+| 5. Listar mis pedidos | Customer | `GET /api/v1/orders/me` | Validar historial por usuario | `200` + lista con `ORDER_ID` | OK (`200`, incluye pedido creado) | Captura BE3-05 + listado |
+| 6. Crear pedido sin token | Sin token | `POST /api/v1/orders` | Validar autenticacion requerida | `401 Unauthorized` | OK (`401`) | Captura BE3-06 + respuesta de seguridad |
+| 7. Crear pedido con body vacio | Customer | `POST /api/v1/orders` body `{}` | Validar estructura minima de request | `400 Bad Request` | OK (`400`) | Captura BE3-07 + error validacion |
+| 8. Crear pedido con quantity=0 | Customer | `POST /api/v1/orders` item invalido | Validar regla cantidad > 0 | `400 Bad Request` | OK (`400`) | Captura BE3-08 + error de cantidad |
+| 9. Crear pedido con unitPrice=0 | Customer | `POST /api/v1/orders` item invalido | Validar regla precio > 0 | `400 Bad Request` | OK (`400`) | Captura BE3-09 + error de precio |
+| 10. Ownership (pedido ajeno) | Customer B | `GET /api/v1/orders/{ORDER_ID_A}` | Validar que no se vea pedido de otro usuario | `400` con mensaje de permisos | OK (`400`, acceso denegado) | Captura BE3-10 + error ownership |
+| 11. Kafka order.created publicado | N/A | Ver topic en Kafka UI tras crear pedido | Validar integracion asincrona inicial | Mensaje presente en topic `order.created` | OK (evento visible) | Captura BE3-11 en Kafka UI |
 
 ## Ejemplo request (caso feliz)
 
