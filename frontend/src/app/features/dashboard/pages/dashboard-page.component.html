@@ -1,0 +1,48 @@
+<section class="page-container">
+  <div class="hero">
+    <div>
+      <h2>Dashboard</h2>
+      <p>Monitorea servicios, pedidos y operaciones en tiempo real.</p>
+    </div>
+    <span class="hero__badge">Sistema Activo</span>
+  </div>
+
+  <div class="cards">
+    @for (item of stats; track item.label; let i = $index) {
+      <p-card [styleClass]="'metric-card metric-card--' + i">
+        <h3>{{ item.label }}</h3>
+        <p class="value">{{ item.value }}</p>
+      </p-card>
+    }
+  </div>
+
+  <p-card styleClass="orders-card">
+    <h3>Mis pedidos recientes</h3>
+
+    <p-table [value]="orders">
+      <ng-template pTemplate="header">
+        <tr>
+          <th>ID</th>
+          <th>Restaurante</th>
+          <th>Total</th>
+          <th>Estado</th>
+          <th>Fecha</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-order>
+        <tr>
+          <td>#{{ order.id }}</td>
+          <td>{{ order.restaurantId }}</td>
+          <td>S/ {{ order.totalAmount }}</td>
+          <td><p-tag [value]="order.status" [severity]="statusSeverity(order.status)"></p-tag></td>
+          <td>{{ order.createdAt | date: 'dd/MM/yyyy HH:mm' }}</td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="5">Aun no tienes pedidos registrados.</td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </p-card>
+</section>

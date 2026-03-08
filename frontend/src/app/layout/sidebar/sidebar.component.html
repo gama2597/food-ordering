@@ -1,0 +1,16 @@
+<p-card>
+  <ng-template pTemplate="header">
+    <h3>Menu</h3>
+  </ng-template>
+
+  <nav class="side-nav">
+    @for (item of navItems; track item.link) {
+      @if (canViewItem(item.roles)) {
+        <a [routerLink]="item.link" routerLinkActive="is-active" class="side-nav__item" (click)="closeOnMobile()">
+          <i [class]="item.icon"></i>
+          <span>{{ item.label }}</span>
+        </a>
+      }
+    }
+  </nav>
+</p-card>

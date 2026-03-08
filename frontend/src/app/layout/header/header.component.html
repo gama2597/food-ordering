@@ -1,0 +1,20 @@
+<p-toolbar styleClass="header-toolbar">
+  <ng-template pTemplate="start">
+    @if (layoutService.mobile()) {
+      <button pButton type="button" icon="pi pi-bars" class="p-button-text mobile-menu-button" (click)="toggleSidebar()"></button>
+    }
+    <a routerLink="/dashboard" class="brand">
+      <i class="pi pi-shopping-bag"></i>
+      <span>Food Ordering</span>
+    </a>
+  </ng-template>
+
+  <ng-template pTemplate="end">
+    <span class="user-pill">
+      <i class="pi pi-user"></i>
+      {{ authService.username() }}
+    </span>
+    <button pButton type="button" label="Dashboard" icon="pi pi-home" class="p-button-text" routerLink="/dashboard"></button>
+    <button pButton type="button" label="Salir" icon="pi pi-sign-out" class="p-button-text" (click)="logout()"></button>
+  </ng-template>
+</p-toolbar>

@@ -1,0 +1,73 @@
+.hero {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+  gap: 1rem;
+}
+
+h2 {
+  margin: 0;
+  font-size: 2rem;
+  color: #1d3557;
+}
+
+p {
+  margin: 0.35rem 0 0;
+  color: var(--fo-muted);
+}
+
+.hero__badge {
+  background: linear-gradient(90deg, #2ec4b6 0%, #20a39e 100%);
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.8rem;
+  border-radius: 999px;
+  padding: 0.45rem 0.8rem;
+  white-space: nowrap;
+}
+
+.cards {
+  margin-top: 1.2rem;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.orders-card {
+  margin-top: 1rem;
+}
+
+:host ::ng-deep .metric-card {
+  border-radius: 16px;
+  color: #fff;
+  border: 0;
+}
+
+:host ::ng-deep .metric-card--0 {
+  background: linear-gradient(135deg, #ff5a5f 0%, #ff7f50 100%);
+}
+
+:host ::ng-deep .metric-card--1 {
+  background: linear-gradient(135deg, #2ec4b6 0%, #20a39e 100%);
+}
+
+:host ::ng-deep .metric-card--2 {
+  background: linear-gradient(135deg, #3a86ff 0%, #4361ee 100%);
+}
+
+.value {
+  margin: 0;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+@media (max-width: 960px) {
+  .hero {
+    flex-direction: column;
+  }
+
+  .cards {
+    grid-template-columns: 1fr;
+  }
+}

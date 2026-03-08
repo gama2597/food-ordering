@@ -1,0 +1,19 @@
+<div class="shell">
+  <p-toast position="top-right" />
+
+  <app-header />
+
+  <div class="shell__body" [class.shell__body--mobile]="layoutService.mobile()">
+    <app-sidebar class="shell__sidebar" [class.is-open]="layoutService.sidebarOpen()" />
+
+    @if (layoutService.mobile() && layoutService.sidebarOpen()) {
+      <button class="shell__backdrop" (click)="layoutService.closeSidebar()" aria-label="Cerrar menu"></button>
+    }
+
+    <main class="shell__content">
+      <router-outlet />
+    </main>
+  </div>
+
+  <app-footer />
+</div>

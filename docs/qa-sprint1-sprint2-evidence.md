@@ -17,6 +17,8 @@ Este documento sirve para registrar resultados de pruebas funcionales, seguridad
 | `PUT /api/v1/users/me` | Si | Si | Si | Si |
 | `GET /api/v1/users/me/addresses` | Si | Si | Si | Si |
 | `POST /api/v1/users/me/addresses` | Si | Si | Si | Si |
+| `PUT /api/v1/users/me/addresses/{id}` | Si | Si | Si | Si |
+| `DELETE /api/v1/users/me/addresses/{id}` | Si | Si | Si | Si |
 | `POST /api/v1/catalog/restaurants` | Si | No | No | No |
 | `GET /api/v1/catalog/restaurants` | Si | Si | Si | Si |
 | `GET /api/v1/catalog/restaurants/{id}` | Si | Si | Si | Si |
@@ -39,6 +41,8 @@ Este documento sirve para registrar resultados de pruebas funcionales, seguridad
 | 8. Update profile | Customer | `PUT /api/v1/users/me` | `200` perfil actualizado |  |  |
 | 9. Add address | Customer | `POST /api/v1/users/me/addresses` | `201` direccion creada |  |  |
 | 10. List addresses | Customer | `GET /api/v1/users/me/addresses` | `200` lista direcciones |  |  |
+| 10.1 Update address | Customer | `PUT /api/v1/users/me/addresses/{id}` | `200` direccion actualizada |  |  |
+| 10.2 Delete address | Customer | `DELETE /api/v1/users/me/addresses/{id}` | `204` direccion inactivada |  |  |
 | 11. Users sin token | Sin token | `GET /api/v1/users/me` | `401 Unauthorized` |  |  |
 | 12. Update profile invalido | Customer | `PUT /api/v1/users/me` body invalido | `400` + `validationErrors` |  |  |
 | 13. Add address invalida | Customer | `POST /api/v1/users/me/addresses` body invalido | `400` + `validationErrors` |  |  |

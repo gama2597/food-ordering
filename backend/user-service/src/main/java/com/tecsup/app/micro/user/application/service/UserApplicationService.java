@@ -14,4 +14,8 @@ public interface UserApplicationService {
     List<Address> listMyAddresses(String authUserId);
 
     Address addAddress(String authUserId, Address address);
+
+    Address updateAddress(String authUserId, Long addressId, Address address);
+
+    void deleteAddress(String authUserId, Long addressId);
 }

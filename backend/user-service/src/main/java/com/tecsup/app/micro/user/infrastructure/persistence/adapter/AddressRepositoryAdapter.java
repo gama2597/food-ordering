@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
@@ -22,8 +23,19 @@ public class AddressRepositoryAdapter implements AddressRepositoryPort {
     }
 
     @Override
+    public Optional<Address> findActiveByIdAndUserId(Long addressId, Long userId) {
+        return addressJpaRepository.findByIdAndUserIdAndActiveTrue(addressId, userId)
+                .map(mapper::toDomain);
+    }
+
+    @Override
     public void clearPrimaryAddress(Long userId) {
         addressJpaRepository.clearPrimaryAddressByUserId(userId);
+    }
+
+    @Override
+    public void deactivateById(Long addressId) {
+        addressJpaRepository.deactivateById(addressId);
     }
 
     @Override

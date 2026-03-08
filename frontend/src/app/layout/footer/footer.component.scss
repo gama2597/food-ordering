@@ -1,0 +1,9 @@
+.app-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.85rem 1.25rem;
+  border-top: 1px solid var(--fo-border);
+  color: var(--fo-muted);
+  background: #fff;
+}

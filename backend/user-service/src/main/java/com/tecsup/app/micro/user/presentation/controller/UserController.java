@@ -17,6 +17,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -71,5 +73,26 @@ public class UserController {
     ) {
         Address saved = userApplicationService.addAddress(jwt.getSubject(), mapper.toDomain(request));
         return new ResponseEntity<>(mapper.toResponse(saved), HttpStatus.CREATED);
+    }
+
+    @PutMapping("/me/addresses/{addressId}")
+    @Operation(summary = "Actualiza una direccion del usuario autenticado")
+    public ResponseEntity<AddressResponse> updateAddress(
+            @AuthenticationPrincipal Jwt jwt,
+            @PathVariable Long addressId,
+            @Valid @RequestBody AddressRequest request
+    ) {
+        Address updated = userApplicationService.updateAddress(jwt.getSubject(), addressId, mapper.toDomain(request));
+        return ResponseEntity.ok(mapper.toResponse(updated));
+    }
+
+    @DeleteMapping("/me/addresses/{addressId}")
+    @Operation(summary = "Elimina (inactiva) una direccion del usuario autenticado")
+    public ResponseEntity<Void> deleteAddress(
+            @AuthenticationPrincipal Jwt jwt,
+            @PathVariable Long addressId
+    ) {
+        userApplicationService.deleteAddress(jwt.getSubject(), addressId);
+        return ResponseEntity.noContent().build();
     }
 }

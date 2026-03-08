@@ -1,0 +1,36 @@
+h2 {
+  margin-top: 0;
+}
+
+.hint {
+  margin-top: 0;
+  color: var(--fo-muted);
+}
+
+.restaurant-list {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+:host ::ng-deep .is-selected {
+  border: 1px solid var(--fo-primary);
+}
+
+.actions {
+  margin-top: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.order-created {
+  color: var(--fo-primary-dark);
+  font-weight: 600;
+}
+
+@media (max-width: 960px) {
+  .restaurant-list {
+    grid-template-columns: 1fr;
+  }
+}

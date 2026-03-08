@@ -1,0 +1,14 @@
+.session-page {
+  min-height: 100dvh;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+}
+
+h2 {
+  margin-top: 0;
+}
+
+p {
+  color: var(--fo-muted);
+}

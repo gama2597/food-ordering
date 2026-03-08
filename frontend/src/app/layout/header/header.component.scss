@@ -1,0 +1,40 @@
+:host {
+  display: block;
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+:host ::ng-deep .header-toolbar {
+  border-radius: 0;
+  border: 0;
+  background: linear-gradient(92deg, #ff5a5f 0%, #ff7f50 45%, #ff9f1c 100%);
+  box-shadow: 0 8px 20px rgba(215, 38, 61, 0.28);
+}
+
+.user-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.35rem 0.6rem;
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  border-radius: 999px;
+  margin-right: 0.5rem;
+  font-size: 0.85rem;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.mobile-menu-button {
+  margin-right: 0.5rem;
+}
+
+:host ::ng-deep .header-toolbar .p-button.p-button-text {
+  color: #fff;
+}

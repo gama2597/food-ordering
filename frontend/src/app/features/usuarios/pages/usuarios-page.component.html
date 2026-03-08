@@ -1,0 +1,121 @@
+<section class="page-container">
+  <h2>Mi perfil</h2>
+
+  @if (profile) {
+    <p-card>
+      <div class="profile-grid">
+        <div><strong>Nombre:</strong> {{ profile.firstName }} {{ profile.lastName }}</div>
+        <div><strong>Email:</strong> {{ profile.email }}</div>
+        <div><strong>Telefono:</strong> {{ profile.phone || '-' }}</div>
+      </div>
+    </p-card>
+  }
+
+  <p-card styleClass="address-form-card">
+    <h3>Nueva direccion</h3>
+
+    <div class="address-form-grid">
+      <label>
+        <span>Etiqueta</span>
+        <input pInputText [(ngModel)]="newAddress.label" placeholder="Casa, Trabajo..." />
+      </label>
+
+      <label>
+        <span>Ciudad</span>
+        <input pInputText [(ngModel)]="newAddress.city" placeholder="Lima" />
+      </label>
+
+      <label class="address-form-grid__full">
+        <span>Direccion</span>
+        <input pInputText [(ngModel)]="newAddress.line1" placeholder="Av. Principal 123" />
+      </label>
+
+      <label>
+        <span>Distrito</span>
+        <input pInputText [(ngModel)]="newAddress.district" placeholder="Miraflores" />
+      </label>
+
+      <label>
+        <span>Referencia</span>
+        <input pInputText [(ngModel)]="newAddress.reference" placeholder="Frente al parque" />
+      </label>
+
+      <label class="switch-row">
+        <span>Direccion principal</span>
+        <p-inputSwitch [(ngModel)]="newAddress.primaryAddress"></p-inputSwitch>
+      </label>
+    </div>
+
+    <button pButton type="button" label="Agregar direccion" icon="pi pi-plus" [loading]="savingAddress" (click)="addAddress()"></button>
+  </p-card>
+
+  <h3>Direcciones</h3>
+  <p-table [value]="addresses">
+    <ng-template pTemplate="header">
+      <tr>
+        <th>Etiqueta</th>
+        <th>Direccion</th>
+        <th>Distrito</th>
+        <th>Ciudad</th>
+        <th>Principal</th>
+        <th>Acciones</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-address>
+      <tr>
+        <td>{{ address.label }}</td>
+        <td>{{ address.line1 }}</td>
+        <td>{{ address.district }}</td>
+        <td>{{ address.city }}</td>
+        <td>{{ address.primaryAddress ? 'Si' : 'No' }}</td>
+        <td class="actions-cell">
+          <button pButton type="button" icon="pi pi-pencil" severity="secondary" [text]="true" (click)="startEditAddress(address)"></button>
+          <button pButton type="button" icon="pi pi-trash" severity="danger" [text]="true" [loading]="deletingAddressId === address.id" (click)="deleteAddress(address)"></button>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+
+  @if (editingAddressId) {
+    <p-card styleClass="address-form-card">
+      <h3>Editar direccion</h3>
+
+      <div class="address-form-grid">
+        <label>
+          <span>Etiqueta</span>
+          <input pInputText [(ngModel)]="editAddress.label" placeholder="Casa, Trabajo..." />
+        </label>
+
+        <label>
+          <span>Ciudad</span>
+          <input pInputText [(ngModel)]="editAddress.city" placeholder="Lima" />
+        </label>
+
+        <label class="address-form-grid__full">
+          <span>Direccion</span>
+          <input pInputText [(ngModel)]="editAddress.line1" placeholder="Av. Principal 123" />
+        </label>
+
+        <label>
+          <span>Distrito</span>
+          <input pInputText [(ngModel)]="editAddress.district" placeholder="Miraflores" />
+        </label>
+
+        <label>
+          <span>Referencia</span>
+          <input pInputText [(ngModel)]="editAddress.reference" placeholder="Frente al parque" />
+        </label>
+
+        <label class="switch-row">
+          <span>Direccion principal</span>
+          <p-inputSwitch [(ngModel)]="editAddress.primaryAddress"></p-inputSwitch>
+        </label>
+      </div>
+
+      <div class="edit-actions">
+        <button pButton type="button" label="Cancelar" severity="secondary" [outlined]="true" (click)="cancelEditAddress()"></button>
+        <button pButton type="button" label="Guardar cambios" icon="pi pi-check" [loading]="updatingAddress" (click)="updateAddress()"></button>
+      </div>
+    </p-card>
+  }
+</section>
