@@ -37,6 +37,9 @@ jobs:
           java-version: "21"
           cache: maven
 
+      - name: Ensure Maven wrappers are executable
+        run: chmod +x backend/order-service/mvnw backend/payment-service/mvnw
+
       - name: Run tests
         run: ${{ matrix.command }}
         working-directory: ${{ matrix.working-directory }}
