@@ -48,6 +48,10 @@ management:
       exposure:
         include: health,info,prometheus
 
+logging:
+  pattern:
+    level: "%5p [traceId=%X{traceId:-} correlationId=%X{correlationId:-}]"
+
 app:
   kafka:
     topics:

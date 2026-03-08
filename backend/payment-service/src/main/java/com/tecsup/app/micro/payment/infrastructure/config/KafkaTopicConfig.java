@@ -10,19 +10,34 @@ import org.springframework.kafka.config.TopicBuilder;
 public class KafkaTopicConfig {
 
     @Bean
+    public NewTopic paymentRequestedTopic(
+            @Value("${app.kafka.topics.payment-requested:payment.requested}") String topicName
+    ) {
+        return topic(topicName);
+    }
+
+    @Bean
     public NewTopic paymentApprovedTopic(
             @Value("${app.kafka.topics.payment-approved:payment.approved}") String topicName
     ) {
-        return TopicBuilder.name(topicName)
-                .partitions(1)
-                .replicas(1)
-                .build();
+        return topic(topicName);
     }
 
     @Bean
     public NewTopic paymentRejectedTopic(
             @Value("${app.kafka.topics.payment-rejected:payment.rejected}") String topicName
     ) {
+        return topic(topicName);
+    }
+
+    @Bean
+    public NewTopic paymentRequestedDlqTopic(
+            @Value("${app.kafka.topics.payment-requested:payment.requested}") String topicName
+    ) {
+        return topic(topicName + ".dlq");
+    }
+
+    private NewTopic topic(String topicName) {
         return TopicBuilder.name(topicName)
                 .partitions(1)
                 .replicas(1)

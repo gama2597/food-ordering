@@ -8,3 +8,9 @@ target/
 .idea/
 .vscode/
 *.iml
+
+# Eclipse / STS
+.classpath
+.project
+.settings/
+.factorypath

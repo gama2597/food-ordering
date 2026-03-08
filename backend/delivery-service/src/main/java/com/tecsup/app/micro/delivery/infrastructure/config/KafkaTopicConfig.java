@@ -10,23 +10,31 @@ import org.springframework.kafka.config.TopicBuilder;
 public class KafkaTopicConfig {
 
     @Bean
+    public NewTopic paymentApprovedTopic(@Value("${app.kafka.topics.payment-approved:payment.approved}") String topicName) {
+        return topic(topicName);
+    }
+
+    @Bean
     public NewTopic deliveryAssignedTopic(@Value("${app.kafka.topics.delivery-assigned:delivery.assigned}") String topicName) {
-        return TopicBuilder.name(topicName)
-                .partitions(1)
-                .replicas(1)
-                .build();
+        return topic(topicName);
     }
 
     @Bean
     public NewTopic deliveryStartedTopic(@Value("${app.kafka.topics.delivery-started:delivery.started}") String topicName) {
-        return TopicBuilder.name(topicName)
-                .partitions(1)
-                .replicas(1)
-                .build();
+        return topic(topicName);
     }
 
     @Bean
     public NewTopic deliveryDeliveredTopic(@Value("${app.kafka.topics.delivery-delivered:delivery.delivered}") String topicName) {
+        return topic(topicName);
+    }
+
+    @Bean
+    public NewTopic paymentApprovedDlqTopic(@Value("${app.kafka.topics.payment-approved:payment.approved}") String topicName) {
+        return topic(topicName + ".dlq");
+    }
+
+    private NewTopic topic(String topicName) {
         return TopicBuilder.name(topicName)
                 .partitions(1)
                 .replicas(1)
