@@ -17,4 +17,10 @@ public interface OrderApplicationService {
     void applyPaymentApproved(Long orderId);
 
     void applyPaymentRejected(Long orderId);
+
+    void applyDeliveryAssigned(Long orderId);
+
+    void applyDeliveryStarted(Long orderId);
+
+    void applyDeliveryDelivered(Long orderId);
 }

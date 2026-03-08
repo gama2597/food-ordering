@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:h2:mem:order_test;MODE=PostgreSQL;DB_CLOSE_DELAY=-1;DATABASE_TO_LOWER=TRUE
+    url: jdbc:h2:mem:delivery_test;MODE=PostgreSQL;DB_CLOSE_DELAY=-1;DATABASE_TO_LOWER=TRUE
     username: sa
     password: sa
   jpa:
@@ -18,17 +18,10 @@ spring:
     listener:
       auto-startup: false
 
-clients:
-  catalog-service:
-    url: http://localhost:8082
-
 app:
   kafka:
     topics:
-      order-created: order.created
-      payment-requested: payment.requested
       payment-approved: payment.approved
-      payment-rejected: payment.rejected
       delivery-assigned: delivery.assigned
       delivery-started: delivery.started
       delivery-delivered: delivery.delivered

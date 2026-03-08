@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import { OrderResponse } from '../../../shared/models/order.models';
 import { PaymentResponse } from '../../../shared/models/payment.models';
+import { DeliveryResponse } from '../../../shared/models/delivery.models';
 
 @Injectable({ providedIn: 'root' })
 export class OrdersDashboardService {
@@ -24,5 +25,9 @@ export class OrdersDashboardService {
 
   getPaymentByOrderId(orderId: number): Observable<PaymentResponse> {
     return this.http.get<PaymentResponse>(`${this.baseUrl}/api/v1/payments/order/${orderId}`);
+  }
+
+  getDeliveryByOrderId(orderId: number): Observable<DeliveryResponse> {
+    return this.http.get<DeliveryResponse>(`${this.baseUrl}/api/v1/deliveries/order/${orderId}`);
   }
 }

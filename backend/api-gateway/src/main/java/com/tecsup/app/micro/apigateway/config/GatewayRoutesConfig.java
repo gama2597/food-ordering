@@ -15,7 +15,8 @@ public class GatewayRoutesConfig {
             @Value("${CATALOG_SERVICE_URL:http://localhost:8082}") String catalogServiceUrl,
             @Value("${USER_SERVICE_URL:http://localhost:8081}") String userServiceUrl,
             @Value("${ORDER_SERVICE_URL:http://localhost:8083}") String orderServiceUrl,
-            @Value("${PAYMENT_SERVICE_URL:http://localhost:8084}") String paymentServiceUrl
+            @Value("${PAYMENT_SERVICE_URL:http://localhost:8084}") String paymentServiceUrl,
+            @Value("${DELIVERY_SERVICE_URL:http://localhost:8085}") String deliveryServiceUrl
     ) {
         return builder.routes()
                 .route("catalog-service", r -> r
@@ -46,6 +47,13 @@ public class GatewayRoutesConfig {
                         .path("/v3/api-docs/payment-service")
                         .filters(f -> f.rewritePath("/v3/api-docs/payment-service", "/v3/api-docs"))
                         .uri(paymentServiceUrl))
+                .route("delivery-service", r -> r
+                        .path("/api/v1/deliveries/**")
+                        .uri(deliveryServiceUrl))
+                .route("delivery-service-docs", r -> r
+                        .path("/v3/api-docs/delivery-service")
+                        .filters(f -> f.rewritePath("/v3/api-docs/delivery-service", "/v3/api-docs"))
+                        .uri(deliveryServiceUrl))
                 .build();
     }
 }

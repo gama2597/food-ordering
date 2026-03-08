@@ -11,6 +11,7 @@ import { switchMap } from 'rxjs/operators';
 import { OrdersDashboardService } from '../services/orders-dashboard.service';
 import { OrderResponse } from '../../../shared/models/order.models';
 import { PaymentResponse } from '../../../shared/models/payment.models';
+import { DeliveryResponse } from '../../../shared/models/delivery.models';
 
 @Component({
   selector: 'app-dashboard-page',
@@ -30,10 +31,13 @@ export class DashboardPageComponent implements OnInit, OnDestroy {
   paymentByOrderId: Record<number, PaymentResponse | undefined> = {};
   selectedPayment?: PaymentResponse;
   paymentDialogVisible = false;
+  loadingDeliveryOrderId?: number;
+  selectedDelivery?: DeliveryResponse;
+  deliveryDialogVisible = false;
   readonly stats = [
-    { label: 'Microservicios activos', value: '4' },
+    { label: 'Microservicios activos', value: '5' },
     { label: 'Pedidos registrados', value: '0' },
-    { label: 'Topologia', value: 'Gateway + 3 servicios' }
+    { label: 'Topologia', value: 'Gateway + 4 servicios' }
   ];
 
   ngOnInit(): void {
@@ -78,7 +82,11 @@ export class DashboardPageComponent implements OnInit, OnDestroy {
   }
 
   canLoadPayment(order: OrderResponse): boolean {
-    return order.status === 'PAID' || order.status === 'CANCELLED';
+    return ['PAID', 'ASSIGNED', 'DELIVERING', 'DELIVERED', 'CANCELLED'].includes(order.status);
+  }
+
+  canLoadDelivery(order: OrderResponse): boolean {
+    return ['ASSIGNED', 'DELIVERING', 'DELIVERED'].includes(order.status);
   }
 
   loadPayment(order: OrderResponse): void {
@@ -110,7 +118,7 @@ export class DashboardPageComponent implements OnInit, OnDestroy {
       this.orders = orders;
       this.stats[1] = { ...this.stats[1], value: String(orders.length) };
       orders
-        .filter((order) => order.status === 'PAYMENT_PENDING')
+        .filter((order) => ['PAYMENT_PENDING', 'PAID', 'ASSIGNED', 'DELIVERING'].includes(order.status))
         .forEach((order) => this.startPollingOrder(order.id));
     });
   }
@@ -125,7 +133,7 @@ export class DashboardPageComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (order) => {
           this.upsertOrder(order);
-          if (order.status === 'PAID' || order.status === 'CANCELLED') {
+          if (order.status === 'CANCELLED' || order.status === 'DELIVERED') {
             this.stopPollingOrder(orderId);
             this.ordersDashboardService.getPaymentByOrderId(orderId).subscribe({
               next: (payment) => {
@@ -133,6 +141,13 @@ export class DashboardPageComponent implements OnInit, OnDestroy {
                 this.selectedPayment = payment;
               }
             });
+            if (order.status === 'DELIVERED') {
+              this.ordersDashboardService.getDeliveryByOrderId(orderId).subscribe({
+                next: (delivery) => {
+                  this.selectedDelivery = delivery;
+                }
+              });
+            }
           }
         },
         error: () => {
@@ -145,6 +160,33 @@ export class DashboardPageComponent implements OnInit, OnDestroy {
 
   closePaymentDialog(): void {
     this.paymentDialogVisible = false;
+  }
+
+  loadDelivery(order: OrderResponse): void {
+    if (!this.canLoadDelivery(order)) {
+      return;
+    }
+
+    this.loadingDeliveryOrderId = order.id;
+    this.ordersDashboardService.getDeliveryByOrderId(order.id).subscribe({
+      next: (delivery) => {
+        this.loadingDeliveryOrderId = undefined;
+        this.selectedDelivery = delivery;
+        this.deliveryDialogVisible = true;
+      },
+      error: (error) => {
+        this.loadingDeliveryOrderId = undefined;
+        this.messageService.add({
+          severity: 'warn',
+          summary: 'Entrega aun no disponible',
+          detail: error?.error?.message ?? 'La entrega todavia no fue registrada. Reintenta en unos segundos.'
+        });
+      }
+    });
+  }
+
+  closeDeliveryDialog(): void {
+    this.deliveryDialogVisible = false;
   }
 
   private stopPollingOrder(orderId: number): void {
@@ -171,6 +213,12 @@ export class DashboardPageComponent implements OnInit, OnDestroy {
     }
     if (status === 'PAYMENT_PENDING') {
       return 'warn';
+    }
+    if (status === 'ASSIGNED' || status === 'DELIVERING') {
+      return 'info';
+    }
+    if (status === 'DELIVERED') {
+      return 'success';
     }
     if (status === 'CANCELLED') {
       return 'danger';

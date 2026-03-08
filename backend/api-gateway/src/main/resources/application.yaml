@@ -36,6 +36,8 @@ springdoc:
         url: /v3/api-docs/order-service
       - name: payment-service
         url: /v3/api-docs/payment-service
+      - name: delivery-service
+        url: /v3/api-docs/delivery-service
 
 management:
   endpoint:

@@ -1,8 +1,8 @@
 spring:
   application:
-    name: order-service
+    name: delivery-service
   datasource:
-    url: ${DB_URL:jdbc:postgresql://localhost:5434/orders_db}
+    url: ${DB_URL:jdbc:postgresql://localhost:5436/delivery_db}
     username: ${DB_USER:food_app_user}
     password: ${DB_PASSWORD:food_app_password}
   jpa:
@@ -20,17 +20,10 @@ spring:
       resourceserver:
         jwt:
           issuer-uri: ${KEYCLOAK_URI:http://localhost:8080/realms/food-ordering}
-  cloud:
-    openfeign:
-      client:
-        config:
-          default:
-            connectTimeout: 3000
-            readTimeout: 5000
   kafka:
     bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
     consumer:
-      group-id: ${KAFKA_CONSUMER_GROUP:order-service}
+      group-id: ${KAFKA_CONSUMER_GROUP:delivery-service}
       auto-offset-reset: earliest
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
@@ -41,7 +34,7 @@ spring:
         spring.json.add.type.headers: false
 
 server:
-  port: 8083
+  port: 8085
 
 springdoc:
   api-docs:
@@ -55,17 +48,10 @@ management:
       exposure:
         include: health,info,prometheus
 
-clients:
-  catalog-service:
-    url: ${CATALOG_SERVICE_URL:http://localhost:8082}
-
 app:
   kafka:
     topics:
-      order-created: order.created
-      payment-requested: payment.requested
       payment-approved: payment.approved
-      payment-rejected: payment.rejected
       delivery-assigned: delivery.assigned
       delivery-started: delivery.started
       delivery-delivered: delivery.delivered

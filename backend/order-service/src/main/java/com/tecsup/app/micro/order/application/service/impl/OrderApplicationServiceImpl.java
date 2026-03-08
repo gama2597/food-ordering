@@ -2,6 +2,7 @@ package com.tecsup.app.micro.order.application.service.impl;
 
 import com.tecsup.app.micro.order.application.service.OrderApplicationService;
 import com.tecsup.app.micro.order.application.usecase.CreateOrderUseCase;
+import com.tecsup.app.micro.order.application.usecase.ApplyDeliveryProgressUseCase;
 import com.tecsup.app.micro.order.application.usecase.ApplyPaymentResultUseCase;
 import com.tecsup.app.micro.order.application.usecase.GetMyOrderByIdUseCase;
 import com.tecsup.app.micro.order.application.usecase.ListMyOrdersUseCase;
@@ -22,6 +23,7 @@ public class OrderApplicationServiceImpl implements OrderApplicationService {
     private final ListMyOrdersUseCase listMyOrdersUseCase;
     private final RequestMyOrderPaymentUseCase requestMyOrderPaymentUseCase;
     private final ApplyPaymentResultUseCase applyPaymentResultUseCase;
+    private final ApplyDeliveryProgressUseCase applyDeliveryProgressUseCase;
 
     @Override
     @Transactional
@@ -57,5 +59,23 @@ public class OrderApplicationServiceImpl implements OrderApplicationService {
     @Transactional
     public void applyPaymentRejected(Long orderId) {
         applyPaymentResultUseCase.applyRejected(orderId);
+    }
+
+    @Override
+    @Transactional
+    public void applyDeliveryAssigned(Long orderId) {
+        applyDeliveryProgressUseCase.applyAssigned(orderId);
+    }
+
+    @Override
+    @Transactional
+    public void applyDeliveryStarted(Long orderId) {
+        applyDeliveryProgressUseCase.applyStarted(orderId);
+    }
+
+    @Override
+    @Transactional
+    public void applyDeliveryDelivered(Long orderId) {
+        applyDeliveryProgressUseCase.applyDelivered(orderId);
     }
 }

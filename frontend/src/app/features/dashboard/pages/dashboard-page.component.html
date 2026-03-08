@@ -9,17 +9,18 @@
 
   <div class="cards">
     @for (item of stats; track item.label; let i = $index) {
-      <p-card [styleClass]="'metric-card metric-card--' + i">
-        <h3>{{ item.label }}</h3>
-        <p class="value">{{ item.value }}</p>
-      </p-card>
+    <p-card [styleClass]="'metric-card metric-card--' + i">
+      <h3>{{ item.label }}</h3>
+      <p class="value">{{ item.value }}</p>
+    </p-card>
     }
   </div>
 
   <p-card styleClass="orders-card">
     <h3>Mis pedidos recientes</h3>
 
-    <p-table [value]="orders" [paginator]="true" [rows]="5" [rowsPerPageOptions]="[5, 10, 15]" [responsiveLayout]="'scroll'">
+    <p-table [value]="orders" [paginator]="true" [rows]="5" [rowsPerPageOptions]="[5, 10, 15]"
+      [responsiveLayout]="'scroll'">
       <ng-template pTemplate="header">
         <tr>
           <th>ID</th>
@@ -39,37 +40,27 @@
           <td><p-tag [value]="order.status" [severity]="statusSeverity(order.status)"></p-tag></td>
           <td>
             @if (paymentByOrderId[order.id]) {
-              <p-tag [value]="paymentByOrderId[order.id]?.status" [severity]="paymentStatusSeverity(paymentByOrderId[order.id]?.status || 'UNKNOWN')"></p-tag>
+            <p-tag [value]="paymentByOrderId[order.id]?.status"
+              [severity]="paymentStatusSeverity(paymentByOrderId[order.id]?.status || 'UNKNOWN')"></p-tag>
             } @else if (order.status === 'PAYMENT_PENDING') {
-              <p-tag value="Procesando" severity="warn"></p-tag>
+            <p-tag value="Procesando" severity="warn"></p-tag>
             } @else {
-              <span>-</span>
+            <span>-</span>
             }
           </td>
           <td>{{ order.createdAt | date: 'dd/MM/yyyy HH:mm' }}</td>
           <td>
-            <button
-              pButton
-              type="button"
-              size="small"
-              label="Pagar"
-              icon="pi pi-credit-card"
-              [disabled]="!canRequestPayment(order)"
-              [loading]="payingOrderId === order.id"
+            <button pButton type="button" size="small" label="Pagar" icon="pi pi-credit-card"
+              [disabled]="!canRequestPayment(order)" [loading]="payingOrderId === order.id"
               (click)="requestPayment(order)">
             </button>
-            <button
-              pButton
-              type="button"
-              size="small"
-              class="ml-2"
-              label="Ver pago"
-              icon="pi pi-search"
-              severity="secondary"
-              [outlined]="true"
-              [disabled]="!canLoadPayment(order)"
-              [loading]="loadingPaymentOrderId === order.id"
-              (click)="loadPayment(order)">
+            <button pButton type="button" size="small" class="ml-2" label="Ver pago" icon="pi pi-search"
+              severity="secondary" [outlined]="true" [disabled]="!canLoadPayment(order)"
+              [loading]="loadingPaymentOrderId === order.id" (click)="loadPayment(order)">
+            </button>
+            <button pButton type="button" size="small" class="ml-2" label="Ver entrega" icon="pi pi-truck"
+              severity="secondary" [outlined]="true" [disabled]="!canLoadDelivery(order)"
+              [loading]="loadingDeliveryOrderId === order.id" (click)="loadDelivery(order)">
             </button>
           </td>
         </tr>
@@ -81,24 +72,30 @@
       </ng-template>
     </p-table>
 
-    <p-dialog
-      header="Detalle de pago"
-      [(visible)]="paymentDialogVisible"
-      [modal]="true"
-      [closable]="true"
-      [draggable]="false"
-      [resizable]="false"
-      [style]="{ width: 'min(92vw, 34rem)' }"
-      (onHide)="closePaymentDialog()"
-    >
+    <p-dialog header="Detalle de pago" [(visible)]="paymentDialogVisible" [modal]="true" [closable]="true"
+      [draggable]="false" [resizable]="false" [style]="{ width: 'min(92vw, 34rem)' }" (onHide)="closePaymentDialog()">
       @if (selectedPayment) {
-        <div class="payment-detail">
-          <h4>Pedido #{{ selectedPayment.orderId }}</h4>
-          <p><strong>Estado:</strong> {{ selectedPayment.status }}</p>
-          <p><strong>Monto:</strong> {{ selectedPayment.currency }} {{ selectedPayment.amount }}</p>
-          <p><strong>Motivo:</strong> {{ selectedPayment.reason }}</p>
-          <p><strong>Actualizado:</strong> {{ selectedPayment.updatedAt | date: 'dd/MM/yyyy HH:mm' }}</p>
-        </div>
+      <div class="payment-detail">
+        <h4>Pedido #{{ selectedPayment.orderId }}</h4>
+        <p><strong>Estado:</strong> {{ selectedPayment.status }}</p>
+        <p><strong>Monto:</strong> {{ selectedPayment.currency }} {{ selectedPayment.amount }}</p>
+        <p><strong>Motivo:</strong> {{ selectedPayment.reason }}</p>
+        <p><strong>Actualizado:</strong> {{ selectedPayment.updatedAt | date: 'dd/MM/yyyy HH:mm' }}</p>
+      </div>
+      }
+    </p-dialog>
+
+    <p-dialog header="Detalle de entrega" [(visible)]="deliveryDialogVisible" [modal]="true" [closable]="true"
+      [draggable]="false" [resizable]="false" [style]="{ width: 'min(92vw, 34rem)' }" (onHide)="closeDeliveryDialog()">
+      @if (selectedDelivery) {
+      <div class="payment-detail">
+        <h4>Pedido #{{ selectedDelivery.orderId }}</h4>
+        <p><strong>Estado:</strong> {{ selectedDelivery.status }}</p>
+        <p><strong>Asignado:</strong> {{ selectedDelivery.assignedAt | date: 'dd/MM/yyyy HH:mm' }}</p>
+        <p><strong>Inicio reparto:</strong> {{ selectedDelivery.startedAt | date: 'dd/MM/yyyy HH:mm' }}</p>
+        <p><strong>Entregado:</strong> {{ selectedDelivery.deliveredAt | date: 'dd/MM/yyyy HH:mm' }}</p>
+        <p><strong>Actualizado:</strong> {{ selectedDelivery.updatedAt | date: 'dd/MM/yyyy HH:mm' }}</p>
+      </div>
       }
     </p-dialog>
   </p-card>
