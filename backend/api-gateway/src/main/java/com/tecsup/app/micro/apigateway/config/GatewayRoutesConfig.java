@@ -13,7 +13,8 @@ public class GatewayRoutesConfig {
     public RouteLocator customRouteLocator(
             RouteLocatorBuilder builder,
             @Value("${CATALOG_SERVICE_URL:http://localhost:8082}") String catalogServiceUrl,
-            @Value("${USER_SERVICE_URL:http://localhost:8081}") String userServiceUrl
+            @Value("${USER_SERVICE_URL:http://localhost:8081}") String userServiceUrl,
+            @Value("${ORDER_SERVICE_URL:http://localhost:8083}") String orderServiceUrl
     ) {
         return builder.routes()
                 .route("catalog-service", r -> r
@@ -30,6 +31,13 @@ public class GatewayRoutesConfig {
                         .path("/v3/api-docs/user-service")
                         .filters(f -> f.rewritePath("/v3/api-docs/user-service", "/v3/api-docs"))
                         .uri(userServiceUrl))
+                .route("order-service", r -> r
+                        .path("/api/v1/orders/**")
+                        .uri(orderServiceUrl))
+                .route("order-service-docs", r -> r
+                        .path("/v3/api-docs/order-service")
+                        .filters(f -> f.rewritePath("/v3/api-docs/order-service", "/v3/api-docs"))
+                        .uri(orderServiceUrl))
                 .build();
     }
 }
