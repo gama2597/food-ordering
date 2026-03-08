@@ -6,6 +6,7 @@ Este documento registra la validacion automatizada de calidad con pruebas unitar
 
 - Unit tests en casos de uso criticos de `order-service`, `payment-service` y `delivery-service`.
 - Integration tests con Testcontainers (Postgres + Kafka) en `order-service` y `payment-service`.
+- Contract tests de eventos Kafka para compatibilidad productor/consumidor entre `payment`, `delivery` y `order`.
 - Escenarios E2E previamente validados y mantenidos (flujo feliz, pago rechazado, restaurante inactivo).
 
 ## Ejecucion de pruebas
@@ -15,6 +16,10 @@ Este documento registra la validacion automatizada de calidad con pruebas unitar
 | order-service | `./mvnw test` | OK (unit + integration, integration con Docker condicional) |
 | payment-service | `./mvnw test` | OK (unit + integration, integration con Docker condicional) |
 | delivery-service | `mvn -f backend/delivery-service/pom.xml test` | OK (unit + context) |
+
+### Nota de ejecucion local
+
+- Si aparece error de compilacion en tests despues de cambios estructurales, ejecutar una vez `clean test` por servicio para regenerar clases y metadatos antes de volver a `test`.
 
 ## Cobertura por casos de uso (unit)
 
@@ -49,6 +54,15 @@ Este documento registra la validacion automatizada de calidad con pruebas unitar
 
 - Los tests de contenedor estan marcados con `@Testcontainers(disabledWithoutDocker = true)`.
 - Si Docker no esta disponible, esos tests se reportan como `Skipped` sin romper pipeline local.
+
+## Contract tests Kafka
+
+- `OrderConsumerContractCompatibilityTest`:
+  - valida que `order-service` deserializa eventos extendidos de `payment` y `delivery` sin romper compatibilidad.
+- `PaymentEventContractTest`:
+  - valida contrato de entrada `payment.requested` y forma de salida para `payment.approved` y `payment.rejected`.
+- `DeliveryEventContractTest`:
+  - valida contrato de entrada `payment.approved` y forma de salida para `delivery.assigned`, `delivery.started`, `delivery.delivered`.
 
 ## Escenarios E2E referenciados (regresion)
 
