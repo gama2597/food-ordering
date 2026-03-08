@@ -6,6 +6,7 @@ import com.tecsup.app.micro.order.domain.model.Order;
 import com.tecsup.app.micro.order.domain.model.OrderItem;
 import com.tecsup.app.micro.order.domain.model.OrderStatus;
 import com.tecsup.app.micro.order.domain.port.CatalogQueryPort;
+import com.tecsup.app.micro.order.domain.port.OrderEventPublisherPort;
 import com.tecsup.app.micro.order.domain.port.OrderRepositoryPort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,6 +21,7 @@ public class CreateOrderUseCase {
 
     private final OrderRepositoryPort orderRepository;
     private final CatalogQueryPort catalogQueryPort;
+    private final OrderEventPublisherPort orderEventPublisher;
 
     public Order execute(String customerAuthUserId, Order order) {
         if (customerAuthUserId == null || customerAuthUserId.isBlank()) {
@@ -56,7 +58,9 @@ public class CreateOrderUseCase {
                 .items(normalizedItems)
                 .build();
 
-        return orderRepository.save(orderToSave);
+        Order savedOrder = orderRepository.save(orderToSave);
+        orderEventPublisher.publishOrderCreated(savedOrder);
+        return savedOrder;
     }
 
     private OrderItem normalizeAndValidateItem(OrderItem item, java.util.Map<Long, CatalogProductSnapshot> catalogProductsById) {

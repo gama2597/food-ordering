@@ -27,6 +27,13 @@ spring:
           default:
             connectTimeout: 3000
             readTimeout: 5000
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      properties:
+        spring.json.add.type.headers: false
 
 server:
   port: 8083
@@ -46,3 +53,8 @@ management:
 clients:
   catalog-service:
     url: ${CATALOG_SERVICE_URL:http://localhost:8082}
+
+app:
+  kafka:
+    topics:
+      order-created: order.created

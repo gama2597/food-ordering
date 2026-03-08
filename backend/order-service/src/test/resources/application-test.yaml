@@ -13,6 +13,8 @@ spring:
       resourceserver:
         jwt:
           jwk-set-uri: http://localhost:9999/mock-jwks
+  kafka:
+    bootstrap-servers: localhost:9092
 
 clients:
   catalog-service:

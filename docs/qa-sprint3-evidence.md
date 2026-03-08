@@ -12,8 +12,9 @@ Estas pruebas validan unicamente lo que ya esta desarrollado en `order-service`:
 - Validaciones de entrada y reglas de dominio locales (cantidad, precio, items, ownership).
 - Seguridad base por JWT (autenticacion requerida).
 - Integracion de rutas y docs a traves de `api-gateway`.
+- Publicacion de evento `order.created` en Kafka al crear pedido.
 
-No incluyen aun validaciones externas por OpenFeign (catalog/user), eventos Kafka ni flujos de pago/entrega.
+No incluyen aun consumo de eventos por otros microservicios (payment/delivery) ni flujos de pago/entrega.
 
 ## Variables usadas
 
@@ -50,6 +51,7 @@ No incluyen aun validaciones externas por OpenFeign (catalog/user), eventos Kafk
 | 8. Crear pedido con quantity=0 | Customer | `POST /api/v1/orders` item invalido | Validar regla cantidad > 0 | `400 Bad Request` |  |  |
 | 9. Crear pedido con unitPrice=0 | Customer | `POST /api/v1/orders` item invalido | Validar regla precio > 0 | `400 Bad Request` |  |  |
 | 10. Ownership (pedido ajeno) | Customer B | `GET /api/v1/orders/{ORDER_ID_A}` | Validar que no se vea pedido de otro usuario | `400` con mensaje de permisos |  |  |
+| 11. Kafka order.created publicado | N/A | Ver topic en Kafka UI tras crear pedido | Validar integracion asincrona inicial | Mensaje presente en topic `order.created` |  |  |
 
 ## Ejemplo request (caso feliz)
 
@@ -80,3 +82,10 @@ const data = pm.response.json();
 pm.expect(data.id).to.exist;
 pm.environment.set("ORDER_ID", data.id);
 ```
+
+## Verificacion Kafka (caso 11)
+
+1. Abrir `http://localhost:8090` (Kafka UI local).
+2. Entrar al cluster `local`.
+3. Verificar topic `order.created` (se crea automaticamente al publicar).
+4. Revisar mensajes del topic despues de ejecutar el caso de creacion de pedido.

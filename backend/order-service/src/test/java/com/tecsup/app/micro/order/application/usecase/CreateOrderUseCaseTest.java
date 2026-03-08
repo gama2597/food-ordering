@@ -5,6 +5,7 @@ import com.tecsup.app.micro.order.domain.model.CatalogProductSnapshot;
 import com.tecsup.app.micro.order.domain.model.Order;
 import com.tecsup.app.micro.order.domain.model.OrderItem;
 import com.tecsup.app.micro.order.domain.port.CatalogQueryPort;
+import com.tecsup.app.micro.order.domain.port.OrderEventPublisherPort;
 import com.tecsup.app.micro.order.domain.port.OrderRepositoryPort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -20,6 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -30,6 +32,9 @@ class CreateOrderUseCaseTest {
 
     @Mock
     private CatalogQueryPort catalogQueryPort;
+
+    @Mock
+    private OrderEventPublisherPort orderEventPublisher;
 
     @InjectMocks
     private CreateOrderUseCase useCase;
@@ -69,6 +74,7 @@ class CreateOrderUseCaseTest {
         assertEquals(100L, result.getId());
         assertEquals(new BigDecimal("40.00"), result.getTotalAmount());
         assertTrue(result.getItems().getFirst().getSubtotal().compareTo(new BigDecimal("40.00")) == 0);
+        verify(orderEventPublisher).publishOrderCreated(any(Order.class));
     }
 
     @Test
