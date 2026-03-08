@@ -1,13 +1,12 @@
-package com.tecsup.app.micro.catalog.presentation.exception;
+package com.tecsup.app.micro.user.presentation.exception;
 
-import com.tecsup.app.micro.catalog.domain.exception.CatalogDomainException;
+import com.tecsup.app.micro.user.domain.exception.UserDomainException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.FieldError;
-import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -19,8 +18,8 @@ import java.util.Map;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(CatalogDomainException.class)
-    public ResponseEntity<ApiErrorResponse> handleDomainException(CatalogDomainException ex, HttpServletRequest request) {
+    @ExceptionHandler(UserDomainException.class)
+    public ResponseEntity<ApiErrorResponse> handleDomainException(UserDomainException ex, HttpServletRequest request) {
         return buildErrorResponse(HttpStatus.BAD_REQUEST, ex.getMessage(), request.getRequestURI(), null);
     }
 
@@ -33,7 +32,6 @@ public class GlobalExceptionHandler {
         for (FieldError fieldError : ex.getBindingResult().getFieldErrors()) {
             errors.put(fieldError.getField(), fieldError.getDefaultMessage());
         }
-
         return buildErrorResponse(
                 HttpStatus.BAD_REQUEST,
                 "La solicitud contiene datos invalidos",
@@ -48,19 +46,6 @@ public class GlobalExceptionHandler {
             HttpServletRequest request
     ) {
         return buildErrorResponse(HttpStatus.BAD_REQUEST, ex.getMessage(), request.getRequestURI(), null);
-    }
-
-    @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ResponseEntity<ApiErrorResponse> handleUnreadableBody(
-            HttpMessageNotReadableException ex,
-            HttpServletRequest request
-    ) {
-        return buildErrorResponse(
-                HttpStatus.BAD_REQUEST,
-                "El cuerpo de la solicitud es obligatorio o tiene un formato JSON invalido",
-                request.getRequestURI(),
-                null
-        );
     }
 
     @ExceptionHandler(AccessDeniedException.class)
@@ -87,7 +72,6 @@ public class GlobalExceptionHandler {
                 path,
                 validationErrors
         );
-
         return ResponseEntity.status(status).body(response);
     }
 }

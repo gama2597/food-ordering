@@ -1,0 +1,17 @@
+package com.tecsup.app.micro.user.application.service;
+
+import com.tecsup.app.micro.user.domain.model.Address;
+import com.tecsup.app.micro.user.domain.model.UserProfile;
+
+import java.util.List;
+
+public interface UserApplicationService {
+
+    UserProfile getOrCreateProfile(String authUserId, String email, String firstName, String lastName);
+
+    UserProfile updateMyProfile(String authUserId, UserProfile profile);
+
+    List<Address> listMyAddresses(String authUserId);
+
+    Address addAddress(String authUserId, Address address);
+}

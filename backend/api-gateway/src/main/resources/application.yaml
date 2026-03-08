@@ -30,6 +30,8 @@ springdoc:
     urls:
       - name: catalog-service
         url: /v3/api-docs/catalog-service
+      - name: user-service
+        url: /v3/api-docs/user-service
 
 management:
   endpoint:
