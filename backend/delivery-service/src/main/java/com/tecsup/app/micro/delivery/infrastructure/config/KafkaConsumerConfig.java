@@ -19,6 +19,9 @@ import org.springframework.util.backoff.FixedBackOff;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Configuracion tecnica del microservicio (seguridad, OpenAPI, Kafka o integraciones de infraestructura).
+ */
 @Slf4j
 @Configuration
 public class KafkaConsumerConfig {
@@ -70,3 +73,4 @@ public class KafkaConsumerConfig {
         return errorHandler;
     }
 }
+

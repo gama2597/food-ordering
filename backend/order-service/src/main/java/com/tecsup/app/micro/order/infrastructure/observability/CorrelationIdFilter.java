@@ -9,6 +9,9 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
+/**
+ * Filtro web que atrapa todas las peticiones HTTP que entran a este microservicio.
+ */
 @Component
 public class CorrelationIdFilter extends OncePerRequestFilter {
 

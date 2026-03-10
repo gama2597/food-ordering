@@ -70,6 +70,23 @@
             ]
         },
         {
+            "username": "cliente2",
+            "enabled": true,
+            "email": "cliente2@food.com",
+            "firstName": "Maria",
+            "lastName": "Gomez",
+            "credentials": [
+                {
+                    "type": "password",
+                    "value": "123456",
+                    "temporary": false
+                }
+            ],
+            "realmRoles": [
+                "ROLE_CUSTOMER"
+            ]
+        },
+        {
             "username": "restaurante1",
             "enabled": true,
             "email": "contacto@pizzaplanet.com",

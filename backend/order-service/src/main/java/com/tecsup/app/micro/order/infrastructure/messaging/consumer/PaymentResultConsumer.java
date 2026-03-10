@@ -11,6 +11,10 @@ import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.stereotype.Component;
 import tools.jackson.databind.ObjectMapper;
 
+/**
+ * Escuchador de eventos de Pago.
+ * Es un adaptador de entrada (Input Adapter) activado por Kafka.
+ */
 @Slf4j
 @Component
 @RequiredArgsConstructor

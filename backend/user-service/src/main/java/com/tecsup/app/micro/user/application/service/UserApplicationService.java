@@ -5,6 +5,9 @@ import com.tecsup.app.micro.user.domain.model.UserProfile;
 
 import java.util.List;
 
+/**
+ * Servicio de aplicacion que orquesta casos de uso y centraliza el flujo de negocio para la capa de presentacion.
+ */
 public interface UserApplicationService {
 
     UserProfile getOrCreateProfile(String authUserId, String email, String firstName, String lastName);
@@ -19,3 +22,4 @@ public interface UserApplicationService {
 
     void deleteAddress(String authUserId, Long addressId);
 }
+

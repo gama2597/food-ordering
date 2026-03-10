@@ -14,6 +14,10 @@ import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Component;
 
+/**
+ * Publicador de Eventos en Kafka.
+ * Implementa el Puerto de salida definido en la capa de Dominio.
+ */
 @Slf4j
 @Component
 @RequiredArgsConstructor

@@ -7,6 +7,9 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 
+/**
+ * Configuracion tecnica del microservicio (seguridad, OpenAPI, Kafka o integraciones de infraestructura).
+ */
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
@@ -24,3 +27,4 @@ public class SecurityConfig {
         return http.build();
     }
 }
+

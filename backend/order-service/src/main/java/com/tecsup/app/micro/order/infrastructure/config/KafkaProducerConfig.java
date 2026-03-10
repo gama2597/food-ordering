@@ -13,6 +13,9 @@ import org.springframework.kafka.support.serializer.JsonSerializer;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Configuración del Productor de Kafka
+ */
 @Configuration
 public class KafkaProducerConfig {
 
@@ -33,3 +36,4 @@ public class KafkaProducerConfig {
         return new KafkaTemplate<>(producerFactory);
     }
 }
+

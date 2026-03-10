@@ -9,6 +9,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+/**
+ * Servicio de aplicacion que orquesta casos de uso y centraliza el flujo de negocio para la capa de presentacion.
+ */
 @Service
 @RequiredArgsConstructor
 public class PaymentApplicationServiceImpl implements PaymentApplicationService {
@@ -28,3 +31,4 @@ public class PaymentApplicationServiceImpl implements PaymentApplicationService 
         return getPaymentByOrderIdUseCase.execute(orderId);
     }
 }
+

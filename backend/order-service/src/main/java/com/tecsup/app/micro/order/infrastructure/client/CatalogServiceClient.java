@@ -10,6 +10,11 @@ import org.springframework.web.bind.annotation.RequestHeader;
 
 import java.util.List;
 
+/**
+ * Cliente OpenFeign.
+ * Esta interfaz le dice a Spring cómo hacer las peticiones HTTP al catalog-service
+ * sin tener que escribir código usando RestTemplate o WebClient.
+ */
 @FeignClient(name = "catalog-service", url = "${clients.catalog-service.url}", configuration = FeignConfig.class)
 public interface CatalogServiceClient {
 

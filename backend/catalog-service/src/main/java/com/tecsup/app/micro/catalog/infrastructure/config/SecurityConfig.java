@@ -15,6 +15,9 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.web.SecurityFilterChain;
 
+/**
+ * Configuracion tecnica del microservicio (seguridad, OpenAPI, Kafka o integraciones de infraestructura).
+ */
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
@@ -68,3 +71,4 @@ public class SecurityConfig {
         return role.startsWith("ROLE_") ? role : "ROLE_" + role.toUpperCase();
     }
 }
+

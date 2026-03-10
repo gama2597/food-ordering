@@ -15,6 +15,9 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 
+/**
+ * Configuracion tecnica del microservicio (seguridad, OpenAPI, Kafka o integraciones de infraestructura).
+ */
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
@@ -68,3 +71,4 @@ public class SecurityConfig {
         return role.startsWith("ROLE_") ? role : "ROLE_" + role.toUpperCase();
     }
 }
+

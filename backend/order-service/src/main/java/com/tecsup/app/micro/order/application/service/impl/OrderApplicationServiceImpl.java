@@ -14,6 +14,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+/**
+ * Servicio de Fachada.
+ * Actúa como la puerta principal para interactuar con todos los Casos de Uso.
+ * Gestiona el control transaccional de Spring (@Transactional).
+ */
 @Service
 @RequiredArgsConstructor
 public class OrderApplicationServiceImpl implements OrderApplicationService {
@@ -79,3 +84,4 @@ public class OrderApplicationServiceImpl implements OrderApplicationService {
         applyDeliveryProgressUseCase.applyDelivered(orderId);
     }
 }
+

@@ -15,6 +15,9 @@ import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.List;
 
+/**
+ * Caso de Uso central: Crea una orden validando precios e inventario.
+ */
 @Service
 @RequiredArgsConstructor
 public class CreateOrderUseCase {
@@ -37,9 +40,13 @@ public class CreateOrderUseCase {
             throw new OrderDomainException("El pedido debe tener al menos un item");
         }
 
+        // 2. Comunicación síncrona: Preguntamos al Catalog-Service si el restaurante existe y está abierto
         catalogQueryPort.validateRestaurantIsActive(order.getRestaurantId());
+
+        // 3. Obtenemos los precios reales del catálogo (para que el usuario no mande precios falsos)
         var catalogProductsById = catalogQueryPort.getProductsByRestaurant(order.getRestaurantId());
 
+        // 4. Mapeamos y calculamos subtotales basados en los precios reales del Catálogo
         List<OrderItem> normalizedItems = order.getItems().stream()
                 .map(item -> normalizeAndValidateItem(item, catalogProductsById))
                 .toList();
@@ -59,10 +66,15 @@ public class CreateOrderUseCase {
                 .build();
 
         Order savedOrder = orderRepository.save(orderToSave);
+
+        // 7. Evento Asíncrono: Publicamos en Kafka que la orden fue creada
         orderEventPublisher.publishOrderCreated(savedOrder);
         return savedOrder;
     }
 
+    /**
+     * Valida que el producto exista, esté disponible y le asigna el precio REAL del catálogo.
+     */
     private OrderItem normalizeAndValidateItem(OrderItem item, java.util.Map<Long, CatalogProductSnapshot> catalogProductsById) {
         if (item.getProductId() == null) {
             throw new OrderDomainException("Cada item debe tener productId");

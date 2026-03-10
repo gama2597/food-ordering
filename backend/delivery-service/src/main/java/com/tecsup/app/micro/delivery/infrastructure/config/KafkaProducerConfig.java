@@ -13,6 +13,9 @@ import org.springframework.kafka.support.serializer.JsonSerializer;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Configuracion tecnica del microservicio (seguridad, OpenAPI, Kafka o integraciones de infraestructura).
+ */
 @Configuration
 public class KafkaProducerConfig {
 
@@ -33,3 +36,4 @@ public class KafkaProducerConfig {
         return new KafkaTemplate<>(producerFactory);
     }
 }
+

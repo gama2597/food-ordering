@@ -11,6 +11,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+/**
+ * Servicio de aplicacion que orquesta casos de uso y centraliza el flujo de negocio para la capa de presentacion.
+ */
 @Service
 @RequiredArgsConstructor
 public class ProductApplicationServiceImpl implements ProductApplicationService {
@@ -37,3 +40,4 @@ public class ProductApplicationServiceImpl implements ProductApplicationService 
         deactivateProductUseCase.execute(productId);
     }
 }
+

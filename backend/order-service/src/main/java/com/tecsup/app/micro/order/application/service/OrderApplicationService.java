@@ -4,6 +4,9 @@ import com.tecsup.app.micro.order.domain.model.Order;
 
 import java.util.List;
 
+/**
+ * Servicio de aplicacion que orquesta casos de uso y centraliza el flujo de negocio para la capa de presentacion.
+ */
 public interface OrderApplicationService {
 
     Order createOrder(String customerAuthUserId, Order order);
@@ -24,3 +27,4 @@ public interface OrderApplicationService {
 
     void applyDeliveryDelivered(Long orderId);
 }
+

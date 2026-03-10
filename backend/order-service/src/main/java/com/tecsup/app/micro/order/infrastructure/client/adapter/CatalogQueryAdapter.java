@@ -23,6 +23,11 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+/**
+ * Adaptador de Salida para consultar el Catálogo.
+ * Implementa el Puerto definido en el Dominio.
+ * Aquí manejamos llamadas HTTP, Circuit Breakers y propagación de seguridad.
+ */
 @Slf4j
 @Component
 @RequiredArgsConstructor
@@ -36,6 +41,9 @@ public class CatalogQueryAdapter implements CatalogQueryPort {
         String authorization = resolveAuthorizationHeader();
         String correlationId = resolveCorrelationId();
 
+        // 1. Envolvemos la llamada en un Circuit Breaker.
+        // Si catalog-service falla repetidamente, el circuito se "abre" y deja de intentarlo,
+        // devolviendo un error rápido en lugar de colgar todo el sistema.
         var circuitBreaker = circuitBreakerFactory.create("catalogService");
         try {
             var restaurant = circuitBreaker.run(() ->
@@ -86,6 +94,10 @@ public class CatalogQueryAdapter implements CatalogQueryPort {
         }
     }
 
+    /**
+     * Traductor de errores: Convierte excepciones técnicas (FeignException, CallNotPermittedException)
+     * en excepciones de Dominio (OrderDomainException) que el caso de uso entiende.
+     */
     private void handleValidationException(Long restaurantId, Throwable ex) {
         Throwable cause = ex.getCause() != null ? ex.getCause() : ex;
 

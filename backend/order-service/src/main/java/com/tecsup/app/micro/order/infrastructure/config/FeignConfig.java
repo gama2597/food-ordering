@@ -11,10 +11,19 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+/**
+ * Configuración para el cliente Feign.
+ */
 @Configuration
 @Slf4j
 public class FeignConfig {
 
+    /**
+     * Interceptor que se ejecuta antes de cada petición de Feign.
+     * Su trabajo es copiar el Token JWT (Authorization) y el Correlation ID
+     * de la petición original del usuario y pegarlos en la nueva petición HTTP que hace Feign.
+     * Esto mantiene la seguridad y la trazabilidad a través de la cadena de microservicios.
+     */
     @Bean
     public RequestInterceptor authHeaderPropagationInterceptor() {
         return template -> {
@@ -46,3 +55,4 @@ public class FeignConfig {
         };
     }
 }
+

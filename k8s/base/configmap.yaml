@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+data:
+  KEYCLOAK_ISSUER_URI: http://localhost:8080/realms/food-ordering
+  KEYCLOAK_JWK_SET_URI: http://host.docker.internal:8080/realms/food-ordering/protocol/openid-connect/certs
+  KEYCLOAK_URI: http://localhost:8080/realms/food-ordering
+  KAFKA_BOOTSTRAP_SERVERS: host.docker.internal:9092
+
+  USER_DB_URL: jdbc:postgresql://host.docker.internal:5432/users_db
+  CATALOG_DB_URL: jdbc:postgresql://host.docker.internal:5433/catalog_db
+  ORDER_DB_URL: jdbc:postgresql://host.docker.internal:5434/orders_db
+  PAYMENT_DB_URL: jdbc:postgresql://host.docker.internal:5435/payments_db
+  DELIVERY_DB_URL: jdbc:postgresql://host.docker.internal:5436/delivery_db
+
+  CATALOG_SERVICE_URL: http://catalog-service:8082
+  USER_SERVICE_URL: http://user-service:8081
+  ORDER_SERVICE_URL: http://order-service:8083
+  PAYMENT_SERVICE_URL: http://payment-service:8084
+  DELIVERY_SERVICE_URL: http://delivery-service:8085

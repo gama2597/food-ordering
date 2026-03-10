@@ -1,5 +1,5 @@
 server:
-  port: 8000
+  port: 8000 # El Gateway es la única puerta de entrada pública (Puerto 8000)
 
 spring:
   application:
@@ -9,7 +9,8 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          # URL del Keycloak que levantamos en Docker
+          # URL del Identity Provider (Keycloak). El Gateway consultará esta URL 
+          # para obtener las llaves públicas y validar la firma de los tokens JWT.
           issuer-uri: http://localhost:8080/realms/food-ordering
 
   cloud:
@@ -17,6 +18,8 @@ spring:
       server:
         webflux:
           globalcors:
+            # Configuración Global de CORS
+            # Permite que una aplicación web alojada en otro puerto (ej. Angular en 4200) consuma nuestra API.
             cors-configurations:
               "[/**]":
                 allowedOrigins: "http://localhost:4200"
@@ -28,6 +31,7 @@ springdoc:
     path: /swagger-ui.html
     disable-swagger-default-url: true
     urls:
+      # Definimos el menú desplegable en Swagger UI para cambiar entre microservicios
       - name: catalog-service
         url: /v3/api-docs/catalog-service
       - name: user-service
@@ -39,6 +43,7 @@ springdoc:
       - name: delivery-service
         url: /v3/api-docs/delivery-service
 
+# Configuración de Actuator para Observabilidad (Preparado para Prometheus/Grafana)
 management:
   endpoint:
     gateway:
@@ -46,8 +51,9 @@ management:
   endpoints:
     web:
       exposure:
+      # Exponemos rutas vitales: health (para ver si el servicio está vivo) y prometheus (para métricas)
         include: health,info,prometheus,gateway
   # Opcional pero recomendado para métricas más ricas:
   metrics:
     tags:
-      application: ${spring.application.name}
+      application: ${spring.application.name} # Etiqueta las métricas con el nombre del gateway

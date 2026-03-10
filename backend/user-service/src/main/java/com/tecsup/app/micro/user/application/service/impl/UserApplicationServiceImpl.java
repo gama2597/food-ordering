@@ -15,6 +15,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+/**
+ * Servicio de aplicacion que orquesta casos de uso y centraliza el flujo de negocio para la capa de presentacion.
+ */
 @Service
 @RequiredArgsConstructor
 public class UserApplicationServiceImpl implements UserApplicationService {
@@ -62,3 +65,4 @@ public class UserApplicationServiceImpl implements UserApplicationService {
         deleteMyAddressUseCase.execute(authUserId, addressId);
     }
 }
+

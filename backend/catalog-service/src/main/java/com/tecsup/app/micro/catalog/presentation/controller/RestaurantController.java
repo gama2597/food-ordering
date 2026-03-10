@@ -16,6 +16,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * Controlador REST que expone endpoints HTTP del microservicio y delega la logica al servicio de aplicacion.
+ */
 @RestController
 @RequestMapping("/api/v1/catalog/restaurants")
 @RequiredArgsConstructor
@@ -59,3 +62,4 @@ public class RestaurantController {
         return ResponseEntity.noContent().build();
     }
 }
+

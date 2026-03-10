@@ -6,6 +6,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.config.TopicBuilder;
 
+/**
+ * Define los "Canales" (Topics) de Kafka por los que nos comunicamos.
+ * Nota cómo cada evento importante tiene su propia DLQ (Dead Letter Queue) asociada.
+ */
 @Configuration
 public class KafkaTopicConfig {
 
@@ -70,6 +74,7 @@ public class KafkaTopicConfig {
         return topic(topicName + ".dlq");
     }
 
+    // Definición de las colas de mensajes "muertos" (DLQ) para cuando el procesamiento falla.
     @Bean
     public NewTopic deliveryDeliveredDlqTopic(@Value("${app.kafka.topics.delivery-delivered:delivery.delivered}") String topicName) {
         return topic(topicName + ".dlq");
@@ -82,3 +87,4 @@ public class KafkaTopicConfig {
                 .build();
     }
 }
+

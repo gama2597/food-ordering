@@ -27,6 +27,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+/**
+ * Controlador REST que expone endpoints HTTP del microservicio y delega la logica al servicio de aplicacion.
+ */
 @RestController
 @RequestMapping("/api/v1/users")
 @RequiredArgsConstructor
@@ -96,3 +99,4 @@ public class UserController {
         return ResponseEntity.noContent().build();
     }
 }
+

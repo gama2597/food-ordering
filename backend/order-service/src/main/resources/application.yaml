@@ -56,6 +56,9 @@ management:
     web:
       exposure:
         include: health,info,prometheus
+  metrics:
+    tags:
+      application: ${spring.application.name}
 
 logging:
   pattern:
@@ -81,8 +84,8 @@ resilience4j:
     instances:
       catalogService:
         slidingWindowType: COUNT_BASED
-        slidingWindowSize: 10
-        minimumNumberOfCalls: 5
-        permittedNumberOfCallsInHalfOpenState: 3
-        failureRateThreshold: 50
-        waitDurationInOpenState: 20s
+        slidingWindowSize: 10 # Evalúa las últimas 10 peticiones
+        minimumNumberOfCalls: 5 # Necesita al menos 5 peticiones para empezar a calcular el %
+        permittedNumberOfCallsInHalfOpenState: 3 # Cuántas peticiones deja pasar para probar si ya se arregló
+        failureRateThreshold: 50 # Si el 50% de las últimas 10 peticiones fallan... ¡Abre el circuito!
+        waitDurationInOpenState: 20s # Espera 20 segundos antes de intentar reconectarse

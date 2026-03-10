@@ -8,6 +8,10 @@ import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 
+/**
+ * Caso de Uso reactivo: Actualiza el estado de la orden basándose 
+ * en eventos recibidos desde el Delivery-Service mediante Kafka.
+ */
 @Service
 @RequiredArgsConstructor
 public class ApplyDeliveryProgressUseCase {
@@ -26,6 +30,10 @@ public class ApplyDeliveryProgressUseCase {
         updateStatus(orderId, OrderStatus.DELIVERED);
     }
 
+    /**
+     * Lógica de seguridad para evitar que el estado retroceda.
+     * Ejemplo: Si ya está DELIVERED, no puede volver a ASSIGNED por un error de concurrencia.
+     */
     private void updateStatus(Long orderId, OrderStatus nextStatus) {
         if (orderId == null) {
             throw new OrderDomainException("El orderId es obligatorio para actualizar entrega");

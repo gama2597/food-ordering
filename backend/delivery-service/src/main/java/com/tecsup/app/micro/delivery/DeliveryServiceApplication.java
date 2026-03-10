@@ -4,6 +4,9 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.kafka.annotation.EnableKafka;
 
+/**
+ * Punto de entrada del microservicio. Inicia el contexto Spring Boot y el ciclo de vida de la aplicacion.
+ */
 @SpringBootApplication
 @EnableKafka
 public class DeliveryServiceApplication {
@@ -12,3 +15,4 @@ public class DeliveryServiceApplication {
         SpringApplication.run(DeliveryServiceApplication.class, args);
     }
 }
+

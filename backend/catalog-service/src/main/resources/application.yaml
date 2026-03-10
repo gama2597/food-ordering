@@ -37,3 +37,6 @@ management:
       exposure:
         # ¡Añadimos prometheus aquí!
         include: health,info,prometheus
+  metrics:
+    tags:
+      application: ${spring.application.name}
